@@ -1,0 +1,24 @@
+.navbar, .navbarClosed {
+    box-shadow: 0 5px 5px 4px rgba(0, 0, 0, 0.4);
+    background-color: var(--first-oposite);
+    color: var(--first);
+    border-radius: 0 5px 5px 0;
+    height:100vh;
+    padding: 0 32px;
+    position: fixed;
+    top:0;
+    bottom:0;
+    font-weight: 600;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 10;
+}
+.navbar {
+    width: 320px;
+}
+.navbarClosed {
+    width: 110px;
+}
