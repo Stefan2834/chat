@@ -101,7 +101,7 @@ export default function Profile({ profile }: UserPageProps) {
 
 export const getServerSideProps: GetServerSideProps<UserPageProps> = async (context) => {
     const { email } = context.query;
-    const server = process.env.NEXT_PUBLIC_SERVER
+    const server = 'https://chat-vfyj.onrender.com'
     console.log('ID from query:', email);
     const profile = await axios.post(`${server}/profile/`, {
         email: email

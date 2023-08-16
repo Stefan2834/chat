@@ -78,7 +78,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
             setUser(null)
             console.log(status)
             setLoading(false)
-            // router.push("/");
+            router.push("/");
         }
     }, [status]);
 
