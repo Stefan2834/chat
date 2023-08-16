@@ -66,10 +66,10 @@ export default function Profile({ profile }: UserPageProps) {
                                 {profile?.posts?.map((i: Posts, index: number) => {
                                     console.log(i.src)
                                     return (
-                                        <div className='p-2 w-1/3 photo-hover'>
+                                        <div className='p-2 w-1/3 photo-hover' key={index}>
                                             <div className='relative w-full' style={{ aspectRatio: '1/1' }} >
                                                 <Image width={100} height={100} alt='Poza'
-                                                    key={index} src={i.src}
+                                                    src={i.src}
                                                     className='w-full h-full relative'
                                                     style={{ aspectRatio: '1/1' }}
                                                 />
