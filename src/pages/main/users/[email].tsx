@@ -8,7 +8,6 @@ import commentPhoto from '../../../svg/white/comment.svg'
 import cameraPhoto from '../../../svg/black/camera.svg'
 import { useRouter } from 'next/router';
 import Posts from '@/components/Posts';
-import { Suspense } from 'react'
 import { useDefault } from '@/contexts/Default';
 
 interface UserPageProps {
@@ -97,7 +96,7 @@ export default function Profile({ profileData, params }: UserPageProps) {
                             user={user}
                             getComment={() => getComment()}
                         />
-                    )}
+                    )}  
                     <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', width: "auto", maxWidth: "100%" }} >
                         <div className='flex items-center justify-center'>
                             <Avatar alt='avatar' src={profile?.image} sx={{ width: 140, height: 140 }} />
@@ -178,7 +177,6 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> = async (cont
     const profile = await axios.post(`${server}/users/profile/`, {
         email: email
     })
-    console.log(profile.data.message)
     if (profile.data.success) {
         return {
             props: {
