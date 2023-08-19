@@ -26,7 +26,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" />
       </head>
       <body className={inter.className}>
-        <Navbar />
         <main>
           {children}
         </main>

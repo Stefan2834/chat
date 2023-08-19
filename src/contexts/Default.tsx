@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useReducer, ReactNode } from 'react';
 import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router';
+import DynamicWidthComponent from '@/components/DynamicWidth';
 
 interface DefaultContextValue {
     state: State;
@@ -113,7 +114,9 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
 
     return (
         <DefaultContext.Provider value={value}>
-            {!loading && children}
+            <DynamicWidthComponent navbar={navOpen} >
+                {!loading && children}
+            </DynamicWidthComponent>
         </DefaultContext.Provider>
     )
 }

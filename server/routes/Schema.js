@@ -4,15 +4,22 @@ const usersSchema = new mongoose.Schema({
   email: String,
   name: String,
   image: String,
-  posts: {
+  posts: [{
     src: String,
+    image:String,
+    email: String,
+    message: String,
+    _id:{
+      $oid: String
+    },
     likes: [String],
     comments: [{
       date: String,
-      name: String,
-      text: String,
+      email: String,
+      message: String,
+      image: String
     }]
-  }
+  }]
 });
 
 const Users = mongoose.model('users', usersSchema);

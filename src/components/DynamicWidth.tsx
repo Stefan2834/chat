@@ -6,52 +6,60 @@ interface DynamicWidthComponentProps {
 }
 
 const DynamicWidthComponent: React.FC<DynamicWidthComponentProps> = ({ navbar, children }) => {
-    const [phone, setPhone] = useState(window.innerWidth < 1000 ? true : false)
-    let padding
+    const [phone, setPhone] = useState(false);
+    let padding;
+
     if (navbar) {
-        padding = '320px'
+        padding = '320px';
     } else {
-        padding = '110px'
+        padding = '110px';
     }
 
     useEffect(() => {
-
         const handleResize = () => {
             if (window.innerWidth < 1000) {
-                setPhone(true)
+                setPhone(true);
             } else {
-                setPhone(false)
+                setPhone(false);
             }
-        }
-        window.addEventListener("resize", handleResize)
+        };
 
-        return () => {
-            window.removeEventListener("resize", handleResize)
+        // Check if running in the browser before adding the event listener
+        if (typeof window !== 'undefined') {
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+            };
         }
-    })
+    }, []);
 
     return (
         <>
             {!phone ? (
-                <div style={{
-                    width: '100%',
-                    height: 'auto',
-                    overflow:'hidden',
-                    paddingBottom: 0,
-                    paddingLeft: padding,
-                    transition: "padding 400ms ease",
-                }}>
+                <div
+                    style={{
+                        width: '100vw',
+                        height: 'auto',
+                        overflow: 'hidden',
+                        paddingBottom: 0,
+                        paddingLeft: padding,
+                        transition: 'padding 400ms ease',
+                    }}
+                >
                     {children}
                 </div>
             ) : (
-                <div style={{
-                    width: '100%',
-                    height: 'auto',
-                    overflow: 'hidden',
-                    paddingLeft: 0,
-                    paddingBottom:56,
-                    transition: 'padding 400ms ease'
-                }}>
+                <div
+                    style={{
+                        width: '100vw',
+                        height: 'auto',
+                        overflow: 'hidden',
+                        paddingLeft: 0,
+                        paddingBottom: 56,
+                        transition: 'padding 400ms ease',
+                    }}
+                >
                     {children}
                 </div>
             )}

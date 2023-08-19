@@ -5,6 +5,9 @@
 
 body {
     box-sizing: border-box;
+    overflow-x: hidden; 
+}
+html {
     overflow-x: hidden;
 }
 * {
@@ -25,5 +28,5 @@ body {
 }
 
 .photo-hover:hover .photo-text {
-    opacity: 0.5;
+    opacity: 1;
 }

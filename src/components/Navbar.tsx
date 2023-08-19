@@ -85,7 +85,7 @@ export default function Navbar() {
             className='w-68 h-14 cursor-pointer flex items-center justify-start hover:translate-x-2'
           >
             <div className='h-10 w-14 mx-2 flex items-center'>
-              <Image src={router.asPath === '/main/messages' ? mailActive : mail} alt='Poza' width='40' height='40' />
+              <Image src={router.asPath === '/main/messages' ? messageActive : message} alt='Poza' width='40' height='40' />
             </div>
             <div className={`h-10 w-60 ${router.asPath === '/main/messages' ? 'font-bold' : 'font-normal'} text-xl flex items-center ml-8`}>Messages</div>
           </Button>
@@ -101,7 +101,7 @@ export default function Navbar() {
             className='w-68 h-14 cursor-pointer flex items-center justify-start hover:translate-x-2'
           >
             <div className='h-10 w-14 mx-2 flex items-center'>
-              <Image src={router.asPath === '/main/notifications' ? messageActive : message} alt='Poza' width='40' height='40' />
+              <Image src={router.asPath === '/main/notifications' ? mailActive : mail} alt='Poza' width='40' height='40' />
             </div>
             <div className={`h-10 w-60 ${router.asPath === '/main/notifications' ? 'font-bold' : 'font-normal'} text-xl flex items-center ml-8`}>Notifications</div>
           </Button>
@@ -111,7 +111,7 @@ export default function Navbar() {
             <div className='h-10 w-14 mx-2 flex items-center'>
               <Image src={router.asPath === `/main/users/${user?.email}` ? userActive : userImg} alt='Poza' width='40' height='40' />
             </div>
-            <div className={`h-10 w-60 ${router.asPath === `/main/users/${user?.email}` ? 'font-bold' : 'font-normal'} text-xl flex items-center ml-8`}>Profil</div>
+            <div className={`h-10 w-60 ${router.asPath === `/main/users/${user?.email}` ? 'font-bold' : 'font-normal'} text-xl flex items-center ml-8`}>Profile</div>
           </Button>
           <Button onClick={() => changePath('/main/settings')} sx={{ textTransform: 'none', color: "black", transition: "400ms ease", margin: "8px 0", position: 'relative', left: -10 }}
             className='w-68 h-14 cursor-pointer flex items-center justify-start hover:translate-x-2'
@@ -132,7 +132,7 @@ export default function Navbar() {
                 <Image src={doubleRight} alt='Poza' width='40' height='40' className='trans' />
               )}
             </div>
-            <div className='h-10 w-60 font-normal text-xl flex items-center ml-8'>Minimize</div>
+            <div className='h-10 w-60 font-normal text-xl flex items-center ml-8'>Collapse</div>
           </Button>
         </Paper>
       ) : (

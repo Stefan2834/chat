@@ -13,18 +13,4 @@ router.post('/', async function (req, res, next) {
   }
 });
 
-router.post('/profile', async (req, res) => {
-  const { email } = req.body
-  try {
-    const user = await Users.findOne({ email })
-    if(user) {
-      res.json({success:true, message:user})
-    } else {
-      res.json({success:false, message:'User not found'})
-    }
-  } catch (err) {
-    res.json({ success: false, message: err })
-  }
-})
-
 module.exports = router;
