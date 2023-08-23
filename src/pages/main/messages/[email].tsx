@@ -212,8 +212,8 @@ export default function Messages({ messagesData, avatar, params, username, err }
 export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (context) => {
   const { email } = context.query;
   const session = await getSession(context);
-  // const server = 'https://chat-vfyj.onrender.com'
-  const server = 'http://localhost:9000'
+  const server = 'https://chat-vfyj.onrender.com'
+  // const server = 'http://localhost:9000'
   const messages = await axios.post(`${server}/messages/messages/`, {
     email: session?.user?.email,
     secondEmail: email,
