@@ -152,7 +152,7 @@ export default function Profile({ profileData, params }: UserPageProps) {
                                     return (
                                         <div className='p-2 w-full photo-hover md:w-1/3' key={index} onClick={() => setSelectedPhoto(i)}>
                                             <div className='relative w-full' style={{ aspectRatio: '1/1' }} >
-                                                <img width={100} height={100} alt='Poza'
+                                                <Image width={100} height={100} alt='Poza'
                                                     src={i.src}
                                                     className='w-full h-full relative object-cover object-center'
                                                 />
@@ -191,8 +191,8 @@ export default function Profile({ profileData, params }: UserPageProps) {
 
 export const getServerSideProps: GetServerSideProps<UserPageProps> = async (context) => {
     const { email } = context.query;
-    const server = 'https://chat-vfyj.onrender.com'
-    // const server = 'http://localhost:9000'
+    // const server = 'https://chat-vfyj.onrender.com'
+    const server = 'http://localhost:9000'
     const profile = await axios.post(`${server}/users/profile/`, {
         email: email
     })

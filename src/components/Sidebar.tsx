@@ -103,7 +103,10 @@ export default function Sidebar({ email, socket }: { email: string | null | unde
                                             <span className={font}>{conv?.lastYou && 'You: '}</span>
                                             <span className={font}>{conv?.lastMsg}</span>
                                         </div>
-                                        <div className={font}> &#xB7; {formatTimeAgo(conv?.date)}</div>
+                                        <div className={font}>
+                                            <span className='font-black mx-1'>·</span>
+                                            {formatTimeAgo(conv?.date)}
+                                        </div>
                                     </div>
                                 </div>
                             </Button>
