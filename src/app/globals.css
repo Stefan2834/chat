@@ -4,14 +4,15 @@
 
 
 body {
-    box-sizing: border-box;
-    overflow-x: hidden; 
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 html {
     overflow-x: hidden;
 }
 * {
     scroll-behavior: smooth;
+    box-sizing: border-box;
 }
 .trans {
     transition: 400ms ease;

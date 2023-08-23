@@ -2,7 +2,8 @@ import React, { useRef, useState } from 'react'
 import { Paper, Avatar, TextField } from '@mui/material'
 import Image from 'next/image'
 import Link from 'next/link'
-import like from '../svg/black/mail.svg'
+import like from '../svg/black/like.svg'
+import likeActive from '../svg/colors/like.svg'
 import axios from 'axios'
 
 interface Posts {
@@ -23,6 +24,7 @@ interface PostsProps {
     onClose: () => void;
     user: null | User;
     getComment: () => void;
+    modifyLike: () => void
 }
 
 interface User {
@@ -48,7 +50,7 @@ function getCurrentDate() {
     return `${year}-${month}-${day} ${hour}:${minute}`;
 }
 
-export default function Posts({ selectedPhoto, onClose, user, getComment }: PostsProps) {
+export default function Posts({ selectedPhoto, onClose, user, getComment, modifyLike }: PostsProps) {
     const commentRef = useRef<any>(null)
     const [loading, setLoading] = useState(false)
 
@@ -72,6 +74,21 @@ export default function Posts({ selectedPhoto, onClose, user, getComment }: Post
         })
     }
 
+    const handleLike = (value: boolean) => {
+        axios.post(`${process.env.NEXT_PUBLIC_SERVER}/users/posts/like`, {
+            value: value,
+            user: user?.email,
+            userPost: selectedPhoto?.email,
+            id: selectedPhoto?._id
+        }).then(data => {
+            if(data.data.success) {
+                modifyLike()
+            }
+        }).catch(err => {
+            console.error(err)
+        })
+    }
+
     if (!selectedPhoto) {
         return null;
     }
@@ -82,7 +99,6 @@ export default function Posts({ selectedPhoto, onClose, user, getComment }: Post
             <div className='h-[calc(100%-100px)] w-full items-start justify-center flex-wrap flex z-10 overflow-auto'
                 onClick={onClose}
             >
-
                 <img src={selectedPhoto.src} className="object-contain object-center w-auto h-full max-w-5xl bg-red-300"
                     onClick={(e) => e.stopPropagation()}
                 />
@@ -119,7 +135,15 @@ export default function Posts({ selectedPhoto, onClose, user, getComment }: Post
                     </div>
                     <div className="w-full h-36 bg-white border-y border-black flex items-center justify-around flex-col">
                         <div className='flex items-center w-[calc(100%-20px)]'>
-                            <Image src={like} alt='Like' width={40} height={40} />
+                            {user?.email && selectedPhoto.likes.includes(user?.email) ? (
+                                <Image src={likeActive} alt='Like' width={40} height={40} className='cursor-pointer'
+                                onClick={() => handleLike(false)}
+                                />
+                            ) : (
+                                <Image src={like} alt='Like' width={40} height={40} className='cursor-pointer'
+                                onClick={() => handleLike(true)}
+                                />
+                            )}
                             <div className='ml-2'>Liked by {selectedPhoto.likes.length} others</div>
                         </div>
                         <form className='w-[calc(100%-20px)]' onSubmit={(e) => { e.preventDefault(); handleComment(selectedPhoto._id) }}>

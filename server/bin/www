@@ -5,7 +5,7 @@ const socketIO = require('socket.io');
 const logger = require('morgan');
 const mongoose = require('mongoose')
 require('dotenv').config();
-const { Messages } = require('../routes/Schema.js')
+const { Messages } = require('../routes/Schema.js');
 
 
 var port = normalizePort(process.env.PORT || '3000');
@@ -19,23 +19,102 @@ const io = socketIO(server, {
 io.on('connection', (socket) => {
   console.log('A user connected');
 
-  socket.on('message', async (message) => {
-    const newMessage = new Messages({
-      time: message.time,
-      photo: message.photo,
-      user: message.user,
-      email: message.email,
-      message: message.message
-    })
-    await newMessage.save()
-    io.emit('message', { success: true, message: message });
+  socket.on('join', (room) => {
+    socket.room = room.room; // Set the room for the socket
+    socket.join(room.room);
+    console.log(`User joined room: ${room.room}`);
   });
 
-  // Handle disconnection
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
+  socket.on('leave', (room) => {
+    socket.room = room.room
+    socket.leave(room.room)
+    console.log(`A user disconnected room: ${room.room}`)
+  })
+
+  socket.on('message', async (data) => {
+    try {
+      const message = {
+        email: data.emailSend,
+        date: data.date,
+        message: data.message
+      }
+      const userSend = await Messages.exists({
+        email: data.emailSend,
+        'conversations.email': data.emailReceive,
+      });
+      if (userSend) {
+        await Messages.updateOne(
+          { email: data.emailSend, 'conversations.email': data.emailReceive },
+          { $push: { 'conversations.$.messages': message } }
+        );
+      } else {
+        const newSendConversation = {
+          email: data.emailReceive,
+          username: data.userReceive,
+          seen: false,
+          avatar: data.avatarReceive,
+          messages: [message],
+        }
+        await Messages.updateOne(
+          { email: data.emailSend },
+          { $push: { conversations: newSendConversation } }
+        );
+      }
+
+
+      const userReceiveExist = await Messages.exists({
+        email: data.emailReceive,
+        'conversations.email': data.emailSend,
+      });
+      if (userReceiveExist) {
+        await Messages.updateOne(
+          { email: data.emailReceive, 'conversations.email': data.emailSend },
+          { $push: { 'conversations.$.messages': message } }
+        );
+      } else {
+        const newReceiverConversation = {
+          email: data.emailSend,
+          username: data.userSend,
+          seen: false,
+          avatar: data.avatarSend,
+          messages: [message],
+        }
+        await Messages.updateOne(
+          { email: data.emailReceive },
+          { $push: { conversations: newReceiverConversation } }
+        );
+      }
+      console.log(`Message sent in room: ${data.room}`);
+      io.to(data.room).emit('message', { success: true, message: message });
+    } catch (err) {
+      console.log(err)
+    }
   });
+
+  socket.on('changeSide', async (data) => {
+    try {
+      const sideReceive = {
+        username: data?.userSend || '',
+        lastMsg: data?.message || '',
+        date: data?.date || 0,
+        avatar: data.avatarSend || '',
+        email: data.emailSend || ''
+      };
+      const sideSend = {
+        username: data?.userReceive || '',
+        lastMsg: data?.message || '',
+        date: data?.date || 0,
+        avatar: data.avatarReceive || '',
+        email: data.emailReceive || ''
+      };
+      console.log(data?.userReceive, data.room)
+      io.to(data?.emailReceive).emit('changeSide', { success: true, side: sideReceive, sender: data.emailSend })
+      io.to(data?.room).emit('changeSide', { success: true, side: sideSend, sender: data.emailSend })
+    } catch (err) { console.log(err) }
+  })
 });
+
+
 const connect = async () => {
   await mongoose.connect(process.env.MONGOOSE_KEY, {
     useNewUrlParser: true,
@@ -47,8 +126,6 @@ const connect = async () => {
 var port = normalizePort(process.env.PORT || '9000');
 app.set('port', port);
 
-
-
 server.listen(port, async () => {
   await connect()
   console.log(`Server is on port: ${port}`)
@@ -58,17 +135,12 @@ server.on('listening', onListening);
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
-
   if (isNaN(port)) {
-    // named pipe
     return val;
   }
-
   if (port >= 0) {
-    // port number
     return port;
   }
-
   return false;
 }
 

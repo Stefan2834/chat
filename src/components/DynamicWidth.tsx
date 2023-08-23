@@ -6,7 +6,7 @@ interface DynamicWidthComponentProps {
 }
 
 const DynamicWidthComponent: React.FC<DynamicWidthComponentProps> = ({ navbar, children }) => {
-    const [phone, setPhone] = useState(false);
+    const [phone, setPhone] = useState(true);
     let padding;
 
     if (navbar) {
@@ -23,9 +23,14 @@ const DynamicWidthComponent: React.FC<DynamicWidthComponentProps> = ({ navbar, c
                 setPhone(false);
             }
         };
-
+        
         // Check if running in the browser before adding the event listener
         if (typeof window !== 'undefined') {
+            if(window.innerWidth < 1000) {
+                setPhone(true)
+            } else {
+                setPhone(false)
+            }
             window.addEventListener('resize', handleResize);
 
             return () => {

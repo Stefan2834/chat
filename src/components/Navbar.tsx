@@ -4,6 +4,8 @@ import { useDefault } from '@/contexts/Default';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { signOut } from "next-auth/react"
+
 
 
 import {
@@ -63,10 +65,10 @@ export default function Navbar() {
   return (
     <>
       {!phone ? (
-        <Paper elevation={10} sx={{ transition: "400ms ease width", zIndex:10 }} className={navOpen ? `${styles.navbar}` : `${styles.navbarClosed}`}>
+        <Paper elevation={10} sx={{ transition: "400ms ease width", zIndex: 10 }} className={navOpen ? `${styles.navbar}` : `${styles.navbarClosed}`}>
           <Button sx={{ textTransform: 'none', position: "absolute", color: "black", transition: "400ms ease", left: 20 }}
             className='w-68 h-14 cursor-pointer flex items-center justify-start hover:translate-x-2 absolute top-2'
-            onClick={() => changePath('/main/home')}
+            onClick={() => { changePath('/main/home'); signOut() }}
           >
             <div className='h-10 w-14 mx-2 flex items-center'>
               <Image src={home} alt='Poza' width='40' height='40' className='trans' />
@@ -85,9 +87,9 @@ export default function Navbar() {
             className='w-68 h-14 cursor-pointer flex items-center justify-start hover:translate-x-2'
           >
             <div className='h-10 w-14 mx-2 flex items-center'>
-              <Image src={router.asPath === '/main/messages' ? messageActive : message} alt='Poza' width='40' height='40' />
+              <Image src={router.asPath.includes('/main/messages') ? messageActive : message} alt='Poza' width='40' height='40' />
             </div>
-            <div className={`h-10 w-60 ${router.asPath === '/main/messages' ? 'font-bold' : 'font-normal'} text-xl flex items-center ml-8`}>Messages</div>
+            <div className={`h-10 w-60 ${router.asPath.includes('/main/messages') ? 'font-bold' : 'font-normal'} text-xl flex items-center ml-8`}>Messages</div>
           </Button>
           <Button onClick={() => changePath('/main/users')} sx={{ textTransform: 'none', color: "black", transition: "400ms ease", margin: "8px 0", position: 'relative', left: -10 }}
             className='w-68 h-14 cursor-pointer flex items-center justify-start hover:translate-x-2'
@@ -136,8 +138,8 @@ export default function Navbar() {
           </Button>
         </Paper>
       ) : (
-        <Box sx={{ pb: 7, zIndex: 10 }}>
-          <Paper sx={{ position: 'fixed', left: 0, top: 0, right: 0, zIndex:10 }} elevation={3}>
+        <Box sx={{ pt: 8, zIndex: '20' }}>
+          <Paper sx={{ position: 'fixed', left: 0, top: 0, right: 0, zIndex: 20 }} elevation={3}>
             <AppBar position="static" sx={{ backgroundColor: "#eee" }}>
               <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Image alt='Poza' src={home} width={35} height={35} className='bg-red-400' />
@@ -149,7 +151,7 @@ export default function Navbar() {
               </Toolbar>
             </AppBar>
           </Paper>
-          <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex:10 }} elevation={10}>
+          <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20 }} elevation={10}>
             <BottomNavigation
               showLabels
             >

@@ -6,7 +6,6 @@ import Image from 'next/image';
 import likePhoto from '../../../svg/white/like.svg'
 import commentPhoto from '../../../svg/white/comment.svg'
 import cameraPhoto from '../../../svg/black/camera.svg'
-import { useRouter } from 'next/router';
 import Posts from '@/components/Posts';
 import { useDefault } from '@/contexts/Default';
 
@@ -43,10 +42,8 @@ interface Comm {
 
 
 export default function Profile({ profileData, params }: UserPageProps) {
-    console.log(params)
     const { user, server } = useDefault()
     const [profile, setProfile] = useState(profileData)
-    const router = useRouter()
     const [selectedPhoto, setSelectedPhoto] = useState<Posts | null>(null)
 
     const getComment = () => {
@@ -84,7 +81,29 @@ export default function Profile({ profileData, params }: UserPageProps) {
         } else {
             document.documentElement.style.overflowY = "scroll"
         }
+        return () => {
+            document.documentElement.style.overflowY = "hidden"
+        }
     }, [selectedPhoto])
+
+    const modifyLike = () => {
+        const userName = user?.email;
+        if (userName && selectedPhoto) {
+            const updatedLikes = selectedPhoto.likes.includes(userName)
+                ? selectedPhoto.likes.filter(likeUser => likeUser !== userName)
+                : [...selectedPhoto.likes, userName];
+            setSelectedPhoto(p => ({
+                likes: updatedLikes,
+                src: p!.src,
+                image: p!.image,
+                email: p!.email,
+                message: p!.message,
+                date: p!.date,
+                _id: p!._id,
+                comments: p!.comments,
+            }));
+        }
+    };
 
     return (
         <>
@@ -95,8 +114,9 @@ export default function Profile({ profileData, params }: UserPageProps) {
                             onClose={() => setSelectedPhoto(null)}
                             user={user}
                             getComment={() => getComment()}
+                            modifyLike={() => modifyLike()}
                         />
-                    )}  
+                    )}
                     <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', width: "auto", maxWidth: "100%" }} >
                         <div className='flex items-center justify-center'>
                             <Avatar alt='avatar' src={profile?.image} sx={{ width: 140, height: 140 }} />
@@ -171,9 +191,8 @@ export default function Profile({ profileData, params }: UserPageProps) {
 
 export const getServerSideProps: GetServerSideProps<UserPageProps> = async (context) => {
     const { email } = context.query;
-    // const server = 'https://chat-vfyj.onrender.com'
-    const server = 'http://localhost:9000'
-    console.log('ID from query:', email);
+    const server = 'https://chat-vfyj.onrender.com'
+    // const server = 'http://localhost:9000'
     const profile = await axios.post(`${server}/users/profile/`, {
         email: email
     })
