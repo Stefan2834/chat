@@ -12,14 +12,15 @@ interface ConversationType {
 }
 
 interface UseSideDataResult {
-    conversation: ConversationType[] | null;
+    conversation: ConversationType[];
     isLoading: boolean;
     error: string | null;
     setError: (error: string | null) => void;
+    setConversation: (conversation: ConversationType[]) => void
 }
 
 export const useSideData = (email: string | null | undefined): UseSideDataResult => {
-    const [conversation, setConversation] = useState<ConversationType[] | null>(null);
+    const [conversation, setConversation] = useState<ConversationType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null)
 
@@ -28,7 +29,8 @@ export const useSideData = (email: string | null | undefined): UseSideDataResult
             const server = process.env.NEXT_PUBLIC_SERVER;
             try {
                 const response = await axios.post(`${server}/messages/sidebar/`, {
-                    email: email
+                    email: email,
+                    jump: 0
                 });
                 if (response?.data?.success) {
                     setConversation(response?.data?.side);
@@ -40,7 +42,7 @@ export const useSideData = (email: string | null | undefined): UseSideDataResult
             } catch (error) {
                 console.error('Error fetching side data:', error);
                 setError('An error occurred while fetching conversation data.');
-                setConversation(null);
+                setConversation([]);
             } finally {
                 setIsLoading(false);
             }
@@ -49,5 +51,5 @@ export const useSideData = (email: string | null | undefined): UseSideDataResult
         fetchSideData();
     }, []);
 
-    return { conversation, isLoading, error, setError };
+    return { conversation, setConversation, isLoading, error, setError };
 };

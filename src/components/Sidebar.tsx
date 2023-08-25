@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { Avatar, Button, Paper, TextField, Skeleton, Alert, Snackbar } from '@mui/material';
+import React, { useEffect, useRef, useState, useCallback } from 'react'
+import { Avatar, Button, Paper, TextField, Skeleton, Alert, Snackbar, CircularProgress, Backdrop } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useSideData } from '@/customHooks/useSidebar';
 import { Socket } from 'socket.io-client';
+import axios from 'axios';
 
 function formatTimeAgo(timestamp: number) {
     const now = Date.now();
@@ -42,51 +43,111 @@ interface ConversationType {
 }
 
 export default function Sidebar({ email, socket }: { email: string | null | undefined, socket: Socket | null }) {
-    const { conversation, isLoading, error, setError } = useSideData(email);
-    const [sidebar, setSidebar] = useState<ConversationType[] | null | undefined>(conversation)
+    const { conversation, setConversation, isLoading, error, setError } = useSideData(email);
+    const [sidebar, setSidebar] = useState<ConversationType[]>(conversation)
+    const scrollRef = useRef<HTMLDivElement | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
     const router = useRouter()
 
     const handleClose = () => {
         setError(null)
     }
+
+    const handleScroll = useCallback(async () => {
+        const container = scrollRef.current;
+        if (container) {
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            if (scrollTop + clientHeight === scrollHeight) {
+                // console.log('bottom');
+                setLoading(true)
+                try {
+                    console.log(sidebar?.length)
+                    const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER}/messages/sidebar/`, {
+                        email: email,
+                        jump: sidebar?.length || 0
+                    });
+                    if (response?.data?.success) {
+                        setSidebar(prevSidebar => [
+                            ...(prevSidebar || []),
+                            ...(response?.data?.side || [])
+                        ]);
+                    } else {
+                        console.error(response?.data?.message)
+                        setError(response?.data?.message);
+                    }
+                } catch (error) {
+                    console.error('Error fetching side data:', error);
+                    setError('An error occurred while fetching conversation data.');
+                    setSidebar([])
+                } finally {
+                    setLoading(false);
+                }
+            }
+        }
+    }, [loading]);
+
+    useEffect(() => {
+        const container = scrollRef?.current;
+        if (container) {
+            container.addEventListener('scroll', handleScroll);
+        }
+
+        return () => {
+            if (container) {
+                container.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, [handleScroll]);
     useEffect(() => {
         setSidebar(conversation)
     }, [conversation])
 
     useEffect(() => {
         const room = email
-        socket?.emit('join', { room })
-        socket?.on('changeSide', (newSidebar) => {
-            setSidebar(s => {
-                const updatedSidebar = s?.map((side: any) => {
-                    if (side.email === newSidebar.side.email) {
-                        return {
-                            ...newSidebar.side,
-                            lastYou: newSidebar?.sender === email,
-                            seen: newSidebar?.sender === email,
-                        };
-                    } else return side;
-                });
-                updatedSidebar?.sort((a, b) => b.date - a.date);
-                return updatedSidebar;
-            })
-        });
+        // socket?.emit('join', { room })
+        // socket?.on('changeSide', (newSidebar) => {
+        //     setSidebar(s => {
+        //         const updatedSidebar = s?.map((side: any) => {
+        //             if (side.email === newSidebar.side.email) {
+        //                 return {
+        //                     ...newSidebar.side,
+        //                     lastYou: newSidebar?.sender === email,
+        //                     seen: newSidebar?.sender === email,
+        //                 };
+        //             } else return side;
+        //         });
+        //         updatedSidebar?.sort((a, b) => b.date - a.date);
+        //         return updatedSidebar;
+        //     })
+        // });
 
-        return () => {
-            socket?.off('changeSide')
-            socket?.emit('leave', { room });
-        };
+        // return () => {
+        //     socket?.off('changeSide')
+        //     socket?.emit('leave', { room });
+        // };
     }, [])
 
 
     return (
-        <Paper elevation={3} className='w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start bg-white'>
+        <Paper elevation={3} className='w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start bg-white'
+            ref={scrollRef}
+        >
+            {loading && (
+                <Backdrop
+                    sx={{ color: '#fff', width: '100%', height: '100%', zIndex: (theme: any) => theme.zIndex.drawer + 1 }}
+                    open={loading}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+            )}
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
                     {error}
                 </Alert>
             </Snackbar>
-            <TextField id="filled-basic" label="Search..." variant="filled" sx={{ width: '100%' }} />
+            <div className='w-[calc(100%+8px)] -m-2 sticky -top-2 -left-2 z-10 bg-white px-2 pt-2'>
+                <TextField id="filled-basic" label="Search..." variant="filled" sx={{ width: '100%' }} />
+            </div>
             {!isLoading && (
                 <>
                     {sidebar?.length !== 0 ? sidebar?.map((conv: any, index: number) => {

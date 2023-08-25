@@ -3,27 +3,34 @@ var router = express.Router();
 const { Messages, Users } = require("./Schema")
 
 router.post('/sidebar', async (req, res) => {
-    const { email } = req.body
+    const { email, jump } = req.body
     try {
-        const messageDb = await Messages.findOne({ email })
+        const elementNumber = 10;
+        const messageDb = await Messages.findOne({ email });
+
         if (!messageDb) {
             return res.json({ success: false, message: 'User not found' });
         }
-        const side = messageDb.conversations.map((conversation) => {
-            const lastMessageIndex = conversation.messages.length - 1;
-            const lastMessage = conversation.messages[lastMessageIndex] || {};
-            return {
-                username: conversation.username || '',
-                lastMsg: lastMessage.message || '',
-                lastYou: lastMessage.email === email,
-                date: lastMessage.date || 0,
-                seen: conversation.seen || false,
-                avatar: conversation.avatar || '',
-                email: conversation.email || ''
-            };
-        });
-        side.sort((a, b) => b.date - a.date);
-        res.json({ success: true, side: side })
+
+
+        const result = await Messages.aggregate([
+            { $match: { email } },
+            { $unwind: "$conversations" },
+            { $sort: { "conversations.messages.date": -1 } },
+            { $group: { _id: "$_id", conversations: { $push: "$conversations" } } },
+            { $project: { conversations: { $slice: ["$conversations", jump, elementNumber] } } }
+        ]);
+
+        const side = result[0].conversations.map((conversation) => ({
+            username: conversation.username || '',
+            lastMsg: conversation.messages[0]?.message || '',
+            lastYou: conversation.messages[0]?.email === email,
+            date: conversation.messages[0]?.date || 0,
+            seen: conversation.seen || false,
+            avatar: conversation.avatar || '',
+            email: conversation.email || ''
+        }));
+        res.json({ success: true, side: side });
     } catch (err) {
         console.log(err)
         res.json({ success: false, message: err.message })
