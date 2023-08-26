@@ -107,11 +107,11 @@ export default function Sidebar({ email, socket }: { email: string | null | unde
             })
         });
 
-        socket?.on('seen', (data) => {
-            if(data.success) {
+        socket?.on('sideSeen', (data) => {
+            if (data.success) {
                 setSidebar(s => s.map((side) => {
-                    if(side.email === data.email) {
-                        return {...side, seen: true}
+                    if (side.email === data.email) {
+                        return { ...side, seen: true }
                     } else return side
                 }))
             }
@@ -119,7 +119,7 @@ export default function Sidebar({ email, socket }: { email: string | null | unde
 
         return () => {
             socket?.off('changeSide')
-            socket?.off('seen')
+            socket?.off('sideSeen')
             socket?.emit('leave', { room });
         };
     }, [])

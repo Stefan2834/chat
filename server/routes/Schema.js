@@ -26,6 +26,7 @@ const messagesSchema = new mongoose.Schema({
   email: String,
   conversations: [{
     email: String,
+    bg: String,
     username: String,
     seen: Boolean,
     avatar: String,

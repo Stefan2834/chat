@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
   console.log('A user connected');
 
   socket.on('join', (room) => {
-    socket.room = room.room; // Set the room for the socket
+    socket.room = room.room;
     socket.join(room.room);
     console.log(`User joined room: ${room.room}`);
   });
@@ -56,6 +56,7 @@ io.on('connection', (socket) => {
           username: data.userReceive,
           seen: false,
           avatar: data.avatarReceive,
+          bg: '/_next/static/media/p2.2b385e7f.jpg',
           messages: [message],
         }
         await Messages.updateOne(
@@ -83,6 +84,7 @@ io.on('connection', (socket) => {
           username: data.userSend,
           seen: false,
           avatar: data.avatarSend,
+          bg: '/_next/static/media/p2.2b385e7f.jpg',
           messages: [message],
         }
         await Messages.updateOne(
@@ -91,6 +93,7 @@ io.on('connection', (socket) => {
         );
       }
       console.log(`Message sent in room: ${data.room}`);
+
       io.to(data.room).emit('message', { success: true, message: message });
       const sideReceive = {
         username: data?.userSend || '',
@@ -116,7 +119,6 @@ io.on('connection', (socket) => {
     }
   });
 
-
   socket.on('seen', async (data) => {
     try {
       const messageSend = await Messages.findOne({ email: data.emailSend });
@@ -140,8 +142,8 @@ io.on('connection', (socket) => {
         await Messages.updateOne({ email: data.emailSend }, updateSend);
         await Messages.updateOne({ email: data.emailReceive }, updateReceive);
         io.to(data?.room).emit('seen', { success: true, })
-        io.to(data?.emailSend).emit('seen', { success: true, email: data.emailReceive })
-        io.to(data?.emailReceive).emit('seen', { success: true, email: data.emailSend })
+        io.to(data?.emailSend).emit('sideSeen', { success: true, email: data.emailReceive })
+        io.to(data?.emailReceive).emit('sideSeen', { success: true, email: data.emailSend })
       }
     } catch (err) {
       console.log(err)

@@ -44,7 +44,7 @@ router.post('/sidebar', async (req, res) => {
 router.post(`/messages`, async (req, res) => {
     const { email, secondEmail, jump } = req.body;
     try {
-        const elementNumber = 20;
+        const elementNumber = 50;
         const messagesDb = await Messages.findOne({ email });
         if (!messagesDb) {
             return res.json({ success: false, message: 'User not found' });
@@ -63,7 +63,8 @@ router.post(`/messages`, async (req, res) => {
                         messages: '$conversations.messages',
                         avatar: '$conversations.avatar',
                         username: '$conversations.username',
-                        seen: '$conversations.seen'
+                        seen: '$conversations.seen',
+                        bg: '$conversations.bg'
                     }
                 },
                 { $limit: 1 },
@@ -79,13 +80,14 @@ router.post(`/messages`, async (req, res) => {
                         avatar: 1,
                         username: 1,
                         seen: 1,
+                        bg: 1,
                     }
                 }
             ]);
-            console.log(nextMessages[0].seen)
             if (nextMessages.length > 0) {
                 const reversedMessages = nextMessages[0].messages;
                 const hasMoreData = reversedMessages.length === elementNumber ? true : false
+                console.log()
                 res.json({
                     success: true,
                     messages: reversedMessages || [],
@@ -93,6 +95,7 @@ router.post(`/messages`, async (req, res) => {
                     username: nextMessages[0].username || '',
                     hasMoreData: hasMoreData,
                     seen: nextMessages[0].seen || false,
+                    bg: nextMessages[0].bg || ''
                 });
             } else {
                 res.json({ success: false, message: 'Conversation not found' });
@@ -106,7 +109,8 @@ router.post(`/messages`, async (req, res) => {
                     avatar: userDb.avatar || '',
                     username: userDb.name,
                     hasMoreData: false,
-                    seen: false
+                    seen: false,
+                    bg: ''
                 });
             } else {
                 res.json({ success: false, message: 'User don\'t exist' });
