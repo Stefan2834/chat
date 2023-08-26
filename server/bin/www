@@ -45,7 +45,10 @@ io.on('connection', (socket) => {
       if (userSend) {
         await Messages.updateOne(
           { email: data.emailSend, 'conversations.email': data.emailReceive },
-          { $push: { 'conversations.$.messages': message } }
+          {
+            $push: { 'conversations.$.messages': message },
+            $set: { 'conversations.$.seen': false }
+          }
         );
       } else {
         const newSendConversation = {
@@ -69,7 +72,10 @@ io.on('connection', (socket) => {
       if (userReceiveExist) {
         await Messages.updateOne(
           { email: data.emailReceive, 'conversations.email': data.emailSend },
-          { $push: { 'conversations.$.messages': message } }
+          {
+            $push: { 'conversations.$.messages': message },
+            $set: { 'conversations.$.seen': false }
+          }
         );
       } else {
         const newReceiverConversation = {
@@ -86,13 +92,7 @@ io.on('connection', (socket) => {
       }
       console.log(`Message sent in room: ${data.room}`);
       io.to(data.room).emit('message', { success: true, message: message });
-    } catch (err) {
-      console.log(err)
-    }
-  });
-
-  socket.on('changeSide', async (data) => {
-    try {
+      console.log(data)
       const sideReceive = {
         username: data?.userSend || '',
         lastMsg: data?.message || '',
@@ -107,10 +107,46 @@ io.on('connection', (socket) => {
         avatar: data.avatarReceive || '',
         email: data.emailReceive || ''
       };
-      console.log(data?.userReceive, data.room)
       io.to(data?.emailReceive).emit('changeSide', { success: true, side: sideReceive, sender: data.emailSend })
-      io.to(data?.room).emit('changeSide', { success: true, side: sideSend, sender: data.emailSend })
-    } catch (err) { console.log(err) }
+      io.to(data?.emailSend).emit('changeSide', { success: true, side: sideSend, sender: data.emailSend })
+    } catch (err) {
+      console.log(err)
+      io.to(data?.room).emit('message', { success: false, message: err.message })
+      io.to(data?.emailReceive).emit('changeSide', { success: false, message: err.message })
+      io.to(data?.emailSend).emit('changeSide', { success: false, message: err.message })
+    }
+  });
+
+
+  socket.on('seen', async (data) => {
+    try {
+      const messageSend = await Messages.findOne({ email: data.emailSend });
+      const messageReceive = await Messages.findOne({ email: data.emailReceive })
+      if (!messageSend || !messageReceive) {
+        return io.to(data?.room).emit('seen', { success: false })
+      }
+      const conversationSendIndex = messageSend.conversations?.findIndex(conversation => conversation.email === data.emailReceive);
+      const conversationReceiveIndex = messageReceive.conversations?.findIndex(conversation => conversation.email === data.emailSend);
+      if (conversationSendIndex !== -1 || conversationReceiveIndex !== 1) {
+        const updateSend = {
+          $set: {
+            [`conversations.${conversationSendIndex}.seen`]: true
+          }
+        };
+        const updateReceive = {
+          $set: {
+            [`conversations.${conversationReceiveIndex}.seen`]: true
+          }
+        }
+        await Messages.updateOne({ email: data.emailSend }, updateSend);
+        await Messages.updateOne({ email: data.emailReceive }, updateReceive);
+        io.to(data?.room).emit('seen', { success: true, })
+        io.to(data?.emailSend).emit('seen', { success: true, email: data.emailReceive })
+        io.to(data?.emailReceive).emit('seen', { success: true, email: data.emailSend })
+      }
+    } catch (err) {
+      console.log(err)
+    }
   })
 });
 

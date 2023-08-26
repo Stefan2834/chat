@@ -12,16 +12,19 @@ interface ConversationType {
 }
 
 interface UseSideDataResult {
-    conversation: ConversationType[];
+    sidebar: ConversationType[];
+    setSidebar: React.Dispatch<React.SetStateAction<ConversationType[]>>;
     isLoading: boolean;
     error: string | null;
     setError: (error: string | null) => void;
-    setConversation: (conversation: ConversationType[]) => void
+    hasMoreData: boolean;
+    setHasMoreData: (hasMoreData: boolean) => void;
 }
 
 export const useSideData = (email: string | null | undefined): UseSideDataResult => {
-    const [conversation, setConversation] = useState<ConversationType[]>([]);
+    const [sidebar, setSidebar] = useState<ConversationType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [hasMoreData, setHasMoreData] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
@@ -33,16 +36,17 @@ export const useSideData = (email: string | null | undefined): UseSideDataResult
                     jump: 0
                 });
                 if (response?.data?.success) {
-                    setConversation(response?.data?.side);
+                    setSidebar(response?.data?.side);
+                    setHasMoreData(response?.data?.hasMoreData)
                 } else {
-                    setConversation([])
+                    setSidebar([])
                     console.error(response?.data?.message)
                     setError(response?.data?.message);
                 }
-            } catch (error) {
+            } catch (error : any) {
                 console.error('Error fetching side data:', error);
-                setError('An error occurred while fetching conversation data.');
-                setConversation([]);
+                setError(`An error occurred while fetching sidebar data. ${error?.message}`);
+                setSidebar([]);
             } finally {
                 setIsLoading(false);
             }
@@ -51,5 +55,5 @@ export const useSideData = (email: string | null | undefined): UseSideDataResult
         fetchSideData();
     }, []);
 
-    return { conversation, setConversation, isLoading, error, setError };
+    return { sidebar, setSidebar, isLoading, error, setError, hasMoreData, setHasMoreData };
 };

@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import { GetServerSideProps } from 'next/types'
 import Sidebar from '@/components/Sidebar'
-import { TextField, IconButton, Avatar, Button, Snackbar, Alert } from '@mui/material';
+import { TextField, IconButton, Avatar, Button, Snackbar, Alert, CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import emoji from '../../../svg/black/emoji-emotions.svg'
 import send from '../../../svg/black/send.svg'
@@ -18,14 +18,9 @@ interface MessagePageProps {
   }[],
   avatar: string,
   username: string,
+  hasSeen: boolean,
   params: string | null,
   err: string | null | undefined,
-}
-
-interface MessagesType {
-  email: string,
-  date: number,
-  message: string,
 }
 
 const formatTimestamp = (timestamp: number) => {
@@ -52,33 +47,117 @@ const formatTimestamp = (timestamp: number) => {
 
 
 
-export default function Messages({ messagesData, avatar, params, username, err }: MessagePageProps) {
+export default function Messages({ messagesData, avatar, params, username, hasSeen, err }: MessagePageProps) {
   const { user, socket } = useDefault()
   const router = useRouter()
   const submitRef = useRef<HTMLInputElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const loading = useRef<boolean>(false)
+  const [hasMoreData, setHasMoreData] = useState(true)
   const [error, setError] = useState(err)
+  const [seen, setSeen] = useState<boolean>(hasSeen)
   const [messages, setMessages] = useState(messagesData)
 
 
+
+  const handleScroll = useCallback(async () => {
+    const container = scrollRef.current;
+    if (container && !loading.current && hasMoreData) {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      if (- scrollTop + clientHeight >= scrollHeight - 250) {
+        loading.current = true
+        try {
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER}/messages/messages/`, {
+            email: user?.email,
+            secondEmail: params,
+            jump: messages?.length
+          });
+          if (response?.data?.success) {
+            setMessages(prevMessages => [
+              ...prevMessages,
+              ...(response?.data?.messages || [])
+            ]);
+            setHasMoreData(response?.data?.hasMoreData)
+          } else {
+            console.error(response?.data?.message)
+            setError(response?.data?.message);
+          }
+        } catch (error) {
+          console.error('Error fetching side data:', error);
+          setMessages([])
+        } finally {
+          loading.current = false
+        }
+      } else if (scrollTop === 0 && messages[0].email !== user?.email) {
+        const newEmit = {
+          emailSend: user?.email,
+          emailReceive: params,
+          room: [user?.email, params].sort().join('-')
+        }
+        socket?.emit('seen', newEmit)
+      }
+    }
+  }, [loading, messages]);
+
+  useEffect(() => {
+    const container = scrollRef?.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [handleScroll]);
+
   useEffect(() => {
     setMessages(messagesData)
-  }, [messagesData])
-
-  useEffect(() => {
+    setSeen(hasSeen)
     const room = [user?.email, params].sort().join('-')
 
+    if (messages[0].email !== user?.email) {
+      const newEmit = {
+        emailSend: user?.email,
+        emailReceive: params,
+        room: [user?.email, params].sort().join('-')
+      }
+      socket?.emit('seen', newEmit)
+    }
     socket?.emit('join', { room })
     socket?.on('message', (newMessage) => {
-      const message = newMessage?.message
-      setMessages((prevMessages) => [{
-        email: message?.email,
-        date: message?.date,
-        message: message?.message,
-      }, ...prevMessages,]);
+      console.log(newMessage)
+      if (newMessage.success) {
+        if (scrollRef.current && scrollRef.current.scrollTop === 0 && newMessage.message.email !== user?.email) {
+          const newEmit = {
+            emailSend: user?.email,
+            emailReceive: params,
+            room: [user?.email, params].sort().join('-')
+          }
+          socket?.emit('seen', newEmit)
+        }
+        const message = newMessage?.message
+        setSeen(false)
+        setMessages((prevMessages) => [{
+          email: message?.email,
+          date: message?.date,
+          message: message?.message,
+        }, ...prevMessages,]);
+      } else setError(newMessage.message)
     });
+
+    socket?.on('seen', (data) => {
+      if (data.success) {
+        setSeen(true)
+      } else {
+        console.error(data)
+      }
+    })
 
     return () => {
       socket?.off('message');
+      socket?.off('seen')
       socket?.emit('leave', { room });
     };
   }, [params]);
@@ -96,7 +175,6 @@ export default function Messages({ messagesData, avatar, params, username, err }
       message: mess || '',
     }
     socket?.emit('message', { ...newMessage, room: [user?.email, params].sort().join('-') })
-    socket?.emit('changeSide', { ...newMessage, room: user?.email || ''})
     if (submitRef.current) submitRef.current.value = '';
   };
 
@@ -114,7 +192,7 @@ export default function Messages({ messagesData, avatar, params, username, err }
         <div className='w-[calc(100%-384px)] h-screen relative flex flex-col ml-96'>
           {err === "User don't exist" ? (
             <div className='w-full h-screen bg-red-400 flex flex-row items-center justify-center'>
-              <div className='' >A</div>
+              <div className=''>User don't exist</div>
             </div>
           ) : (
             <>
@@ -130,7 +208,10 @@ export default function Messages({ messagesData, avatar, params, username, err }
                   Hey
                 </Button>
               </div>
-              <div className='w-full test bg-blue-400 relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10'>
+              <div className='w-full test bg-blue-400 relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10' ref={scrollRef}>
+                {seen && messages[0].email === user?.email && (
+                  <div className='w-full text-right pr-4'>Seen</div>
+                )}
                 {messages?.map((mess: any, index: number) => {
                   const toOld = index !== messages.length - 1 && messages[index].date - (3600 * 1000) > messages[index + 1].date || index === messages.length - 1;
                   const toOldSecond = index !== 0 && messages[index - 1].date - (3600 * 1000) > messages[index].date
@@ -175,13 +256,17 @@ export default function Messages({ messagesData, avatar, params, username, err }
                     )
                   }
                 })}
-                <div className='w-[calc(100%+40px)] bg-blue-400 -ml-10 mb-2'>
-                  <div className='w-full h-[calc(100vh-150px)] flex flex-col items-center justify-center'>
-                    <Avatar sx={{ width: '100px', height: '100px' }} src={avatar} />
-                    <div className='font-semibold font-md m-2 py-2'>{params}</div>
+                {hasMoreData ? (
+                  <CircularProgress color="inherit" sx={{ m: 2 }} />
+                ) : (
+                  <div className='w-[calc(100%+40px)] bg-blue-400 -ml-10 mb-2'>
+                    <div className='w-full h-[calc(100vh-150px)] flex flex-col items-center justify-center'>
+                      <Avatar sx={{ width: '100px', height: '100px' }} src={avatar} />
+                      <div className='font-semibold font-md m-2 py-2'>{params}</div>
+                    </div>
                   </div>
-                </div>
-              </div >
+                )}
+              </div>
               <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} className='sticky bottom-0 w-full bg-white flex items-center justify-center px-8 py-3'>
                 <IconButton aria-label="Example" sx={{ mr: 2 }}>
                   <Image src={emoji} alt='Emoji' width={35} height={35} className='cursor-pointer' />
@@ -217,13 +302,15 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
   const messages = await axios.post(`${server}/messages/messages/`, {
     email: session?.user?.email,
     secondEmail: email,
+    jump: 0
   })
   if (messages?.data?.success) {
     return {
       props: {
-        messagesData: messages?.data?.messages?.reverse() || [],
+        messagesData: messages?.data?.messages || [],
         avatar: messages?.data?.avatar || '',
         username: messages?.data?.username || '',
+        hasSeen: messages?.data?.seen || false,
         params: email as string,
         err: null,
         revalidate: 1,
@@ -234,6 +321,7 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
       messagesData: [],
       avatar: '',
       username: '',
+      hasSeen: false,
       params: null,
       err: messages?.data?.message
     }
