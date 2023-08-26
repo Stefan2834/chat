@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const { Messages, Users } = require("./Schema");
-const { reverse } = require('lodash');
+
 
 router.post('/sidebar', async (req, res) => {
     const { email, jump } = req.body
