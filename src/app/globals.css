@@ -16,7 +16,7 @@ html {
 .trans {
     transition: 400ms ease;
 }
-.test {
+.bg {
     background-position: center;
     background-size: cover;
     background-blend-mode:darken;

@@ -251,7 +251,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                         <Info />
                      ) : (
                         <>
-                           <div className='w-full test relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10'
+                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10'
                             ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
                            >
                               {seen && messages[0]?.email === user?.email && (
@@ -351,7 +351,8 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
    const { email } = context.query;
    const session = await getSession(context);
    // const server = 'https://chat-vfyj.onrender.com'
-   const server = 'http://localhost:9000'
+   // const server = 'http://localhost:9000'
+   const server = process.env.NEXT_PUBLIC_SERVER || ''
    const messages = await axios.post(`${server}/messages/messages/`, {
       email: session?.user?.email,
       secondEmail: email,
