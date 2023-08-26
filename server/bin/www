@@ -92,7 +92,6 @@ io.on('connection', (socket) => {
       }
       console.log(`Message sent in room: ${data.room}`);
       io.to(data.room).emit('message', { success: true, message: message });
-      console.log(data)
       const sideReceive = {
         username: data?.userSend || '',
         lastMsg: data?.message || '',

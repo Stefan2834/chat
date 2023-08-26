@@ -15,6 +15,7 @@ interface MessagePageProps {
     email: string | null | undefined,
     date: number,
     message: string,
+    loading?: boolean
   }[],
   avatar: string,
   username: string,
@@ -48,11 +49,14 @@ const formatTimestamp = (timestamp: number) => {
 
 
 export default function Messages({ messagesData, avatar, params, username, hasSeen, err }: MessagePageProps) {
-  const { user, socket } = useDefault()
   const router = useRouter()
+
+  const { user, socket } = useDefault()
+
   const submitRef = useRef<HTMLInputElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const loading = useRef<boolean>(false)
+
   const [hasMoreData, setHasMoreData] = useState(true)
   const [error, setError] = useState(err)
   const [seen, setSeen] = useState<boolean>(hasSeen)
@@ -127,8 +131,8 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
     }
     socket?.emit('join', { room })
     socket?.on('message', (newMessage) => {
-      console.log(newMessage)
       if (newMessage.success) {
+        setSeen(false)
         if (scrollRef.current && scrollRef.current.scrollTop === 0 && newMessage.message.email !== user?.email) {
           const newEmit = {
             emailSend: user?.email,
@@ -138,12 +142,23 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
           socket?.emit('seen', newEmit)
         }
         const message = newMessage?.message
-        setSeen(false)
-        setMessages((prevMessages) => [{
-          email: message?.email,
-          date: message?.date,
-          message: message?.message,
-        }, ...prevMessages,]);
+        if (message.email === user?.email) {
+          setMessages(mess => mess.map(m => {
+            if (m?.loading && m?.date === message?.date) {
+              return {
+                email: m.email,
+                date: m.date,
+                message: m.message,
+              }
+            } else { return m }
+          }))
+        } else {
+          setMessages((prevMessages) => [{
+            email: message?.email,
+            date: message?.date,
+            message: message?.message,
+          }, ...prevMessages,]);
+        }
       } else setError(newMessage.message)
     });
 
@@ -164,6 +179,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
   const handleSubmit = () => {
     const mess = submitRef?.current?.value;
+    const date = Date.now()
     const newMessage = {
       emailSend: user?.email,
       emailReceive: params,
@@ -171,9 +187,15 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
       avatarReceive: avatar,
       userSend: user?.name,
       userReceive: username,
-      date: Date.now(),
+      date: date,
       message: mess || '',
     }
+    setMessages((m) => [{
+      email: user?.email,
+      date: date,
+      message: mess || '',
+      loading: true,
+    }, ...m])
     socket?.emit('message', { ...newMessage, room: [user?.email, params].sort().join('-') })
     if (submitRef.current) submitRef.current.value = '';
   };
@@ -226,6 +248,9 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                           >
                             <div className='mr-2'>{mess.message}</div>
                           </div>
+                            {mess?.loading && (
+                              <CircularProgress color='inherit' size={20} sx={{ml:2, mr:2}} />
+                            )}
                         </div>
                         {toOld && (
                           <div className='my-4'>{formatTimestamp(messages[index]?.date)}</div>
