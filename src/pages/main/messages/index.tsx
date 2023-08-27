@@ -7,7 +7,7 @@ export default function Messages() {
 
   return (
     <div className='w-full h-screen bg-red-400'>
-      <Sidebar email={user?.email} socket={socket} />
+      <Sidebar email={user?.email} socket={socket} className='w-full' />
     </div>
   )
 }

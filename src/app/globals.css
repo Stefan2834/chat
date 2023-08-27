@@ -37,9 +37,19 @@ html {
     opacity: 1;
 }
 
+.msg-input {
+    font-size: 18px !important;
+    height:22px !important;    
+}
+
 @media screen and (max-width:1000px) {
     .msg-img {
         width:25px;
         height:25px;
+    }
+    .msg-input {
+        font-size: 18px !important;;
+        height:18px !important;
+        line-height: 18px !important;
     }
 }

@@ -252,7 +252,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            email={user?.email || ''} emailSend={params || ''} />
                      ) : (
                         <>
-                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-235px)]'
+                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-240px)]'
                               ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
                            >
                               {seen && messages[0]?.email === user?.email && (
@@ -319,7 +319,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                               )}
                            </div>
                            <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }}
-                              className='sticky bottom-0 w-full flex items-center justify-center px-8 py-3 mobile:fixed mobile:bottom-14 mobile:py-2 mobile:px-3'
+                              className='sticky bottom-0 w-full flex items-center bg-white justify-center px-8 py-3 mobile:fixed mobile:bottom-14 mobile:py-2 mobile:px-3'
                            >
                               <IconButton aria-label="Example" sx={{
                                  "@media (min-width: 1000px)": {
@@ -338,13 +338,13 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                               <TextField id="outlined-basic" fullWidth label="Type..." variant="outlined"
                                  inputProps={{
                                     maxLength: 200,
-                                    style: { height: '10px', fontSize:'14px' }
+                                    className: 'msg-input',
                                  }}
                                  required
                                  inputRef={submitRef}
                               />
                               <IconButton aria-label="Example" type='submit'
-                                 sx={{ "@media (min-width: 1000px)": { mr: 2 } }}
+                                 sx={{ "@media (min-width: 1000px)": { mr: 2 }, mr:-1 }}
                               >
                                  <Image src={send} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
                               </IconButton>
