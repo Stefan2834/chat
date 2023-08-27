@@ -56,13 +56,13 @@ export default function Info({ activeBg, setBg, setInfo, setError, email, emailS
           if (background === newBg) {
             return (
               <div className='bg aspect-square w-60 rounded m-4 hover:bg-white border-8 border-slate-950'
-                style={{ backgroundImage: `url(${background})` }}
+                style={{ backgroundImage: `url(${background})` }} key={index}
               />
             )
           } else {
             return (
               <div className='bg aspect-square w-60 rounded m-4 hover:bg-white'
-                style={{ backgroundImage: `url(${background})` }}
+                style={{ backgroundImage: `url(${background})` }} key={index}
                 onClick={() => setNewBg(background)}
               />
             )
