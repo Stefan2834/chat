@@ -328,7 +328,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                               )}
                            </div>
                            <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }}
-                              className='sticky bottom-0 w-full flex items-center bg-white justify-center px-8 py-3 mobile:fixed mobile:py-2 mobile:px-3'
+                              className='sticky bottom-0 w-full flex items-center bg-white justify-center px-8 py-3 mobile:fixed mobile:py-2 mobile:px-1'
                            >
                               <IconButton aria-label="Example" sx={{
                                  "@media (min-width: 1000px)": {
