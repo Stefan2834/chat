@@ -126,7 +126,7 @@ export default function Sidebar({ email, socket, className }: { email: string | 
 
 
     return (
-        <Paper elevation={3} className={`w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start bg-white ${className} mobile:w-full mobile:mt-16`}
+        <Paper elevation={3} className={`w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start bg-white ${className} mobile:w-full mobile:mt-16 mobile:h-[calc(100%-64px)]`}
             ref={scrollRef}
         >
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={handleClose}>
