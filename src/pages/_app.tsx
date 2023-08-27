@@ -42,7 +42,7 @@ export default function App({ Component, pageProps }: AppProps) {
                                 {shouldTransition === 'right' ? (
                                     <CSSTransition
                                         key={router.route}
-                                        timeout={{ enter: 3000, exit: 3000 }}
+                                        timeout={{ enter: 600, exit: 600 }}
                                         classNames={`page-right`}
                                     >
                                         <div className={`page-right`}>
@@ -52,7 +52,7 @@ export default function App({ Component, pageProps }: AppProps) {
                                 ) : (
                                     <CSSTransition
                                         key={router.route}
-                                        timeout={{ enter: 3000, exit: 3000 }}
+                                        timeout={{ enter: 600, exit: 600 }}
                                         classNames={`page-left`}
                                     >
                                         <div className={`page-left`}>
