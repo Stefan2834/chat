@@ -29,7 +29,6 @@
     position:absolute;
 }
 .custom2 {
-    translate: 0;
     transition: 600ms ease-in-out;
     position: fixed;
 }
