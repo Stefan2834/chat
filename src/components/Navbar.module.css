@@ -25,13 +25,14 @@
 }
 .custom1 {
     transform: translateX(-100vw);
-    visibility: hidden;
+    visibility: visible;
     height:100vh;
     transition: 600ms ease-in-out;
     position: absolute;
 }
 .custom2 {
     height: 100vh;
+    transform: translateX(0);
     transition: 600ms ease-in-out;
     position: absolute;
     visibility: visible;
