@@ -32,6 +32,6 @@
 .custom2 {
     height: 100vh; 
     transition: 600ms ease-in-out;
-    transform: translate(0vw);
+    transform: translateX(0);
     position: fixed;
 }

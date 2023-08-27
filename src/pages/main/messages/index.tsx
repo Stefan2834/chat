@@ -6,7 +6,7 @@ export default function Messages() {
   const { user, socket } = useDefault()
 
   return (
-    <div className='w-full h-full bg-red-400'>
+    <div className='w-full h-full'>
       <Sidebar email={user?.email} socket={socket} />
     </div>
   )
