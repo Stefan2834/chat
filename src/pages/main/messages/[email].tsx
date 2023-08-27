@@ -136,6 +136,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
       setInfo(false)
       const container = scrollRef?.current;
       if (container) container.scrollTop = 0
+      window.screenTop = 0
       const room = [user?.email, params].sort().join('-')
 
       socket?.emit('join', { room })
