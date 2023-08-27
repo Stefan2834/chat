@@ -65,14 +65,14 @@ html {
     .page-left-enter-active,
     .page-left-exit-active {
       transform: translateX(0);
-      transition: transform 600ms ease-in-out;
+      transition: transform 3s ease-in-out;
     }
     .page-left-exit {
       transform: translateX(0);
     }
     .page-left-exit-active {
       transform: translateX(-100%);
-      transition: transform 600ms ease-in-out;
+      transition: transform 3s ease-in-out;
     }
     .page-right-enter,
     .page-right-exit {
@@ -86,13 +86,13 @@ html {
     .page-right-enter-active,
     .page-right-exit-active {
       transform: translateX(0);
-      transition: transform 600ms ease-in-out;
+      transition: transform 3s ease-in-out;
     }
     .page-right-exit {
       transform: translateX(0);
     }
     .page-right-exit-active {
       transform: translateX(100%);
-      transition: transform 600ms ease-in-out;
+      transition: transform 3s ease-in-out;
     }
 }
