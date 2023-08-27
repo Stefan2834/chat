@@ -222,7 +222,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
    return (
       <>
-         <div className='w-full h-full'>
+         <div className='w-full h-screen mobile:h-full'>
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={() => setError(null)}>
                <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
                   {error}
@@ -238,7 +238,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                   </div>
                ) : (
                   <>
-                     <div className='sticky top-0 left-0 flex items-center justify-between w-full h-auto mobile:h-14 mobile:fixed z-10 bg-white'>
+                     <div className='sticky top-0 left-0 flex items-center justify-between w-full h-auto mobile:h-14'>
                         <Button variant='text' sx={{ textTransform: 'none', height: '50px', display: 'none', '@media (max-width:1000px)': { display: 'inherit' } }}
                            onClick={() => router.push('/main/messages')}
                         >
@@ -261,7 +261,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            email={user?.email || ''} emailSend={params || ''} />
                      ) : (
                         <>
-                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-120px)] mobile:fixed mobile:bottom-16'
+                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-120px)]'
                               ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
                            >
                               {seen && messages[0]?.email === user?.email && (
