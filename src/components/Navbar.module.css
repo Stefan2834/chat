@@ -24,14 +24,16 @@
     width: 110px;
 }
 .custom1 {
-    transform: translateX(-100vw);
-    height:100vh;
-    transition: 3s ease-in-out;
+    transform: translate(-100vw);
+    transition: 600ms ease-in-out;
     position: absolute;
+    height:100vh;
 }
 .custom2 {
-    height:100vh;
-    transition: 3s ease-in-out;
+    transform: translate(0);
+    height: 100vh;
+    transition: 600ms ease-in-out;
     position: fixed;
 }
+
 

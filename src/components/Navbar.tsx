@@ -154,7 +154,7 @@ export default function Navbar() {
               </Toolbar>
             </AppBar>
           </Paper>
-          <Paper sx={{ position: 'fixed', bottom: 0, left: 0, zIndex: 20, width: '100vw' }} elevation={10}>
+          <Paper sx={{ position: 'fixed', bottom: 0, zIndex: 20, width: '100vw' }} elevation={10}>
             <BottomNavigation
               showLabels
             >
