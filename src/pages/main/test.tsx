@@ -220,8 +220,8 @@ export default function Test() {
     ]
     return (
         <>
-            <div className='w-full h-[calc(100vh-120px)] mobile:h-full'>
-                <div className='w-full h-screen relative flex flex-col ml-0 mobile:w-[calc(100%-384px)] mobile:ml-96'>
+            <div className='w-full mobile:h-[calc(100vh-120px)] h-full'>
+                <div className='mobile:w-full h-screen relative flex flex-col mobile:ml-0 w-[calc(100%-384px)] ml-96'>
                     {false ? (
                         <div className='w-full h-screen bg-red-400 flex flex-row items-center justify-center'>
                             <div className=''>User don't exist</div>
@@ -301,7 +301,7 @@ export default function Test() {
                                             </div>
                                         </div>
                                     </div>
-                                    <form onSubmit={(e) => { e.preventDefault() }} className='fixed bottom-14 w-full bg-white flex items-center justify-center px-8 py-3 mobile:sticky mobile:bottom-0'>
+                                    <form onSubmit={(e) => { e.preventDefault() }} className='sticky bottom-0 w-full bg-white flex items-center justify-center px-8 py-3 mobile:fixed mobile:bottom-14'>
                                         <IconButton aria-label="Example" sx={{ mr: 2 }}>
                                             <Image src={'/emoji'} alt='Emoji' width={35} height={35} className='cursor-pointer' />
                                         </IconButton>
