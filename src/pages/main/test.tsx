@@ -1,303 +1,330 @@
 import React from 'react'
-import { Button, Avatar, TextField, Tooltip, CircularProgress } from '@mui/material'
-import { IconButton } from '@mui/material'
+import Image from 'next/image';
+import { TextField, IconButton, Avatar, Button, Snackbar, Alert, CircularProgress } from '@mui/material';
 
 export default function Test() {
-    const messagesState = [{
+    const avatar = ''
+    const params = ''
+    const messages = [{
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
+        avatar: 'mirel',
+        date: 16944444555
     },
     {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
-    },{
+        avatar: 'mirel',
+        date: 16944444555
+    }, {
         email: 'mirel',
         message: 'sall',
         user: 'mirel',
-        photo: 'mirel',
-        time: 'ieri'
+        avatar: 'mirel',
+        date: 16944444555
     }
-]
+    ]
     return (
-        <div className="flex w-screen h-screen justify-center items-start relative">
-            <div className="max-w-[700px] w-full relative">
-                <div className="w-full max-w-[700px] h-16 bg-slate-300 font-semibold flex items-center justify-evenly z-10 fixed shadow-md">
-                    <div>{'mirel'}</div>
-                    <Button variant='outlined'>Sign out</Button>
-                </div>
-                <div className="w-full flex flex-col-reverse items-end justify-start bg-gradient-to-br from-slate-200  to-blue-200 overflow-scroll overflow-x-hidden scroll-container mt-16"
-                >
-                    <div className="h-auto w-full flex flex-col-reverse items-center justify-center">
-                        {messagesState.map((mess, index) => {
-                            if (mess.email === 'mirel') {
-                                return (
-                                    <div className="flex justify-end w-full items-center m-3" key={index}>
-                                        <div className="flex flex-col items-end justify-end m-2">
-                                            <div className="flex items-center justify-center">
-                                                <div className="font-extralight text-xs overflow-hidden">{mess.time}</div>
-                                                <div className="font-sm">{mess.user}</div>
-                                            </div>
-                                            <div className="bg-white p-1 rounded text-right shadow-sm" key={index}>{mess.message}</div>
-                                        </div>
-                                        {/* <Avatar className="rounded-full mr-2 shadow-sm" src={''} width={35} height={35} alt='Profile picture' /> */}
-                                    </div>
-                                )
-                            } else {
-                                return (
-                                    <div className="flex justify-start w-full items-center m-3" key={index}>
-                                        {/* <Avatar className="rounded-full ml-2 shadow-sm" src={''} width={35} height={35} alt='Profile picture' /> */}
-                                        <div className="flex flex-col items-start justify-end m-2">
-                                            <div className="flex items-center justify-center">
-                                                <div className="font-sm">{mess.user}</div>
-                                                <div className="font-extralight text-xs overflow-hidden">{mess.time}</div>
-                                            </div>
-                                            <div className="bg-white p-1 rounded shadow-sm" key={index}>{mess.message}</div>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        })}
-                        <div className="w-full bg-blue-400 flex flex-col items-center justify-center font-semibold text-center">
-                            <span className="my-1">Chat-app versiunea beta</span>
-                            <span className="my-1">Trimiți și primești mesaje în timp real</span>
-                            <span className="my-1">Versiunea full disbonibilă în curând</span>
+        <>
+            <div className='w-full h-[calc(100vh-120px)] mobile:h-full'>
+                <div className='w-full h-screen relative flex flex-col ml-0 mobile:w-[calc(100%-384px)] mobile:ml-96'>
+                    {false ? (
+                        <div className='w-full h-screen bg-red-400 flex flex-row items-center justify-center'>
+                            <div className=''>User don't exist</div>
                         </div>
-                    </div>
+                    ) : (
+                        <>
+                            <div className='sticky top-0 left-0 flex items-center justify-between bg-white w-full h-20'>
+                                <Button variant='text' className='cursor-pointer'
+                                    sx={{ textTransform: "none", color: "black", fontWeight: "600", fontSize: "16px", p: 3, display: 'flex', justifyContent: 'flex-start' }}
+                                >
+                                    <Avatar src={avatar} sx={{ width: 50, height: 50 }} />
+                                    <div className='ml-2'>{params}</div>
+                                </Button>
+                                <Button variant='text' sx={{ textTransform: 'none', height: '50px', mr: 3 }}>
+                                    <Image src={'/infoPhoto'} alt='Info' width={35} height={35} />
+                                </Button>
+                            </div>
+                            {false ? (
+                                <></>
+                            ) : (
+                                <>
+                                    <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-[calc(100vh-280px)] mobile:h-full'
+                                    >
+                                        {messages?.map((mess: any, index: number) => {
+                                            const toOld = index !== messages.length - 1 && messages[index].date - (3600 * 1000) > messages[index + 1].date || index === messages.length - 1 ||
+                                                new Date(mess.date).getDay() !== new Date(messages[index + 1].date).getDay();
+                                            const toOldSecond = index !== 0 && messages[index - 1].date - (3600 * 1000) > messages[index].date ||
+                                                new Date(messages[index - 1]?.date).getDay() !== new Date(mess.date).getDay();
+                                            if ('iosifs617@gmail.com' === mess?.email) {
+                                                const borderBottom = !toOldSecond && index !== 0 && messages[index - 1].email === 'iosifs617@gmail.com' ? '0px' : '24px'
+                                                const borderTop = !toOld && index !== messages.length - 1 && messages[index + 1].email === 'iosifs617@gmail.com' ? '0px' : '24px'
+                                                return (
+                                                    <>
+                                                        <div className='w-auto max-w-[60%] p-0.5 self-end mr-2 flex justify-center items-center' key={index}>
+                                                            <div className={`flex flex-col text-right bg-white p-3 overflow-hidden rounded-3xl items-center justify-start trans`}
+                                                                style={{ borderTopRightRadius: borderTop, borderBottomRightRadius: borderBottom }}
+                                                            >
+                                                                <div className='mr-2'>{mess.message}</div>
+                                                            </div>
+                                                            {mess?.loading && (
+                                                                <CircularProgress size={16} sx={{ ml: 1, mr: 1, color: 'white' }} />
+                                                            )}
+                                                        </div>
+                                                        {toOld && (
+                                                            <div className='my-4 text-white'>Ieri</div>
+                                                        )}
+                                                    </>
+                                                )
+                                            } else {
+                                                const borderBottom = !toOldSecond && index !== 0 && messages[index - 1].email !== 'iosifs617@gmail.com' ? '0px' : '24px'
+                                                const borderTop = !toOld && index !== messages.length - 1 && messages[index + 1].email !== 'iosifs617@gmail.com' ? '0px' : '24px'
+                                                return (
+                                                    <>
+                                                        <div className='w-auto max-w-[60%] p-0.5 self-start ml-2 flex justify-center items-center' key={index}>
+                                                            {borderBottom === '24px' && (
+                                                                <Avatar src={avatar}
+                                                                    sx={{ cursor: 'pointer', ml: -5 }}
+                                                                />
+                                                            )}
+                                                            <div className='flex flex-col bg-white p-3 items-center justify-start rounded-3xl ml-2'
+                                                                style={{ borderTopLeftRadius: borderTop, borderBottomLeftRadius: borderBottom }}
+                                                            >
+                                                                <div className=''>{mess.message}</div>
+                                                            </div>
+                                                        </div>
+                                                        {toOld && (
+                                                            <div className='my-4 text-white'>Today</div>
+                                                        )}
+                                                    </>
+                                                )
+                                            }
+                                        })}
+                                        <div className='w-[calc(100%+40px)] -ml-10 mb-2'>
+                                            <div className='w-full h-[calc(100vh-150px)] flex flex-col items-center justify-center'>
+                                                <Avatar sx={{ width: '100px', height: '100px' }} src={avatar} />
+                                                <div className='font-semibold font-md m-2 py-2 text-white'>{params}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form onSubmit={(e) => { e.preventDefault() }} className='fixed bottom-14 w-full bg-white flex items-center justify-center px-8 py-3 mobile:sticky mobile:bottom-0'>
+                                        <IconButton aria-label="Example" sx={{ mr: 2 }}>
+                                            <Image src={'/emoji'} alt='Emoji' width={35} height={35} className='cursor-pointer' />
+                                        </IconButton>
+                                        <IconButton aria-label="Example" sx={{ mr: 2 }}>
+                                            <Image src={'/files'} alt='Emoji' width={35} height={35} className='cursor-pointer' />
+                                        </IconButton>
+                                        <TextField id="outlined-basic" fullWidth label="Type..." variant="outlined"
+                                            inputProps={{
+                                                maxLength: 200,
+                                            }}
+                                            required
+                                        />
+                                        <IconButton aria-label="Example" sx={{ ml: 3 }} type='submit' >
+                                            <Image src={'/send'} alt='Emoji' width={35} height={35} className='cursor-pointer' />
+                                        </IconButton>
+                                    </form>
+                                </>
+                            )}
+
+                        </>
+                    )}
                 </div>
-                <form
-                    className="flex items-center justify-between w-full bottom-0 h-16 bg-zinc-200 max-w-[700px] fixed"
-                >
-                    {/* <Avatar className="rounded-full mx-2" width={40} height={40} alt='Profile picture' /> */}
-                    <TextField
-                        sx={{
-                            width: 'calc(100% - 50px)',
-                            maxWidth: '650px',
-                            position: 'fixed',
-                            bottom: '3px',
-                            marginLeft: '60px',
-                            paddingRight: '70px',
-                            backgroundColor: 'transparent',
-                        }} label="Type something..." variant="filled" className="w-100"
-                        inputProps={{
-                            maxLength: 100,
-                        }}
-                        required
-                    />
-                    <Tooltip title="Send">
-                        <IconButton sx={{ position: 'absolute', right: '4px', height: '50px', width: '50px' }} type='submit'>
-                            <CircularProgress
-                                size={24}
-                                sx={{
-                                    color: 'rgb(96, 165, 250)',
-                                    position: 'absolute',
-                                    top: '50%',
-                                    left: '50%',
-                                    marginTop: '-12px',
-                                    marginLeft: '-12px',
-                                }}
-                            />
-                        </IconButton>
-                    </Tooltip>
-                </form>
-            </div>
-        </div>
+            </div >
+        </>
     )
 }

@@ -318,7 +318,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                  </div>
                               )}
                            </div>
-                           <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} className='sticky bottom-0 w-full bg-white flex items-center justify-center px-8 py-3'>
+                           <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} className='fixed bottom-14 w-full bg-white flex items-center justify-center px-8 py-3 mobile:sticky md:bottom-0'>
                               <IconButton aria-label="Example" sx={{ mr: 2 }}>
                                  <Image src={emoji} alt='Emoji' width={35} height={35} className='cursor-pointer' />
                               </IconButton>
