@@ -30,4 +30,6 @@
 }
 .custom2 {
     position: fixed;
+    transition: 600ms ease-in-out;
+    translate:0;
 }
