@@ -140,8 +140,7 @@ export default function Navbar() {
         </Paper>
       ) : (
         <>
-          <Box sx={{ zIndex: '20', height: '100%' }}
-            className={router.route === '/main/messages/[email]' ? `${styles.custom1}` : `${styles.custom2}`}
+          <div className={router.route === '/main/messages/[email]' ? `${styles.custom1} h-full z-20` : `${styles.custom2} h-full z-20`}
           >
             <Paper sx={{ position: 'fixed', left: 0, top: 0, zIndex: 20, width: '100vw' }} elevation={3}
             >
@@ -156,7 +155,7 @@ export default function Navbar() {
                 </Toolbar>
               </AppBar>
             </Paper>
-            <Paper sx={{ position: 'sticky', left: 0, top: 'calc(100vh)', zIndex: 20, width: '100vw', height:'56px' }} elevation={3}>
+            <Paper sx={{ position: 'sticky', left: 0, top: 'calc(100vh)', zIndex: 20, width: '100vw', height: '56px' }} elevation={3}>
               <BottomNavigation
                 showLabels
               >
@@ -177,8 +176,7 @@ export default function Navbar() {
                 />
               </BottomNavigation>
             </Paper>
-          </Box>
-
+          </div>
         </>
       )}
     </>
