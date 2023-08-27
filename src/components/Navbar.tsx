@@ -140,7 +140,8 @@ export default function Navbar() {
         </Paper>
       ) : (
         <>
-          <div className={router.route === '/main/messages/[email]' ? `${styles.custom1} h-full z-20` : `${styles.custom2} h-full z-20`}
+          <Box sx={{ zIndex: '20', height: '100vh' }}
+            className={router.route === '/main/messages/[email]' ? `${styles.custom1}` : `${styles.custom2}`}
           >
             <Paper sx={{ position: 'fixed', left: 0, top: 0, zIndex: 20, width: '100vw' }} elevation={3}
             >
@@ -155,7 +156,7 @@ export default function Navbar() {
                 </Toolbar>
               </AppBar>
             </Paper>
-            <Paper sx={{ position: 'sticky', left: 0, top: 'calc(100vh)', zIndex: 20, width: '100vw', height: '56px' }} elevation={3}>
+            <div style={{ position: 'fixed', left: 0, bottom: 0, zIndex: 20, width: '100vw', height:'56px', backgroundColor:'red' }}>
               <BottomNavigation
                 showLabels
               >
@@ -175,8 +176,9 @@ export default function Navbar() {
                   icon={<Image alt='Poza' width={30} height={30} src={router.asPath === `/main/users/${user?.email}` ? userActive : userImg} />}
                 />
               </BottomNavigation>
-            </Paper>
-          </div>
+            </div>
+tyle         </Box>
+
         </>
       )}
     </>
