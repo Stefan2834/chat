@@ -6,11 +6,9 @@
 body {
     overflow-x: hidden;
     overflow-y: hidden;
-    min-height: 100vh;
 }
 html {
     overflow-x: hidden;
-    overflow-y: hidden;
 }
 * {
     box-sizing: border-box;

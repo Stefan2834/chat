@@ -245,13 +245,13 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            <Image src={backPhoto} alt='Info' width={35} height={35} />
                         </Button>
                         <Button variant='text' className='cursor-pointer'
-                           sx={{ textTransform: "none", color: "black", fontWeight: "600", fontSize: "16px", p: 3, display: 'flex', justifyContent: 'flex-start' }}
+                           sx={{ textTransform: "none", color: "black", fontWeight: "600", fontSize: "16px", "@media (min-width:1000px)": { p: 3 }, display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
                            onClick={() => router.push(`/main/users/${params}`)}
                         >
                            <Avatar src={avatar} sx={{ width: 50, height: 50, '@media (max-width:1000px)': { width: 30, height: 30 } }} />
                            <div className='ml-2 truncate'>{params}</div>
                         </Button>
-                        <Button variant='text' sx={{ textTransform: 'none', height: '50px', mr: 3 }} onClick={() => setInfo(!info)}>
+                        <Button variant='text' sx={{ textTransform: 'none', height: '50px', "@media (min-width:1000px)": { mr: 3 } }} onClick={() => setInfo(!info)}>
                            <Image src={infoPhoto} alt='Info' width={35} height={35} />
                         </Button>
                      </div>
@@ -261,7 +261,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            email={user?.email || ''} emailSend={params || ''} />
                      ) : (
                         <>
-                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-120px)] mobile:bottom-0'
+                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-120px)]'
                               ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
                            >
                               {seen && messages[0]?.email === user?.email && (
@@ -288,7 +288,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                              )}
                                           </div>
                                           {toOld && (
-                                             <div className='my-4 text-white'>{formatTimestamp(messages[index]?.date)}</div>
+                                             <div className='my-4 text-white -ml-10 w-full text-center'>{formatTimestamp(messages[index]?.date)}</div>
                                           )}
                                        </>
                                     )
@@ -310,14 +310,14 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                              </div>
                                           </div>
                                           {toOld && (
-                                             <div className='my-4 text-white'>{formatTimestamp(messages[index]?.date)}</div>
+                                             <div className='my-4 text-white -ml-10 w-full text-center'>{formatTimestamp(messages[index]?.date)}</div>
                                           )}
                                        </>
                                     )
                                  }
                               })}
                               {hasMoreData ? (
-                                 <CircularProgress sx={{ m: 2, color: 'white' }} />
+                                 <CircularProgress sx={{ m: 2, color: 'white', marginLeft:"-40px"}} />
                               ) : (
                                  <div className='w-[calc(100%+40px)] -ml-10 mb-2'>
                                     <div className='w-full h-[calc(100vh-150px)] flex flex-col items-center justify-center'>

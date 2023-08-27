@@ -220,8 +220,8 @@ export default function Test() {
     ]
     return (
         <>
-            <div className='w-full mobile:h-[calc(100vh-120px)] h-full'>
-                <div className='mobile:w-full h-screen relative flex flex-col mobile:ml-0 w-[calc(100%-384px)] ml-96'>
+            <div className='w-full mobile:h-[calc(400vh-120px)] h-full overflow-scroll'>
+                {/* <div className='mobile:w-full h-screen relative flex flex-col mobile:ml-0 w-[calc(100%-384px)] ml-96'>
                     {false ? (
                         <div className='w-full h-screen bg-red-400 flex flex-row items-center justify-center'>
                             <div className=''>User don't exist</div>
@@ -323,7 +323,7 @@ export default function Test() {
 
                         </>
                     )}
-                </div>
+                </div> */}
             </div >
         </>
     )
