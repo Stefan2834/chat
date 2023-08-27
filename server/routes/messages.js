@@ -110,7 +110,7 @@ router.post(`/messages`, async (req, res) => {
                     username: userDb.name,
                     hasMoreData: false,
                     seen: false,
-                    bg: ''
+                    bg: 'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg'
                 });
             } else {
                 res.json({ success: false, message: 'User don\'t exist' });
@@ -121,5 +121,22 @@ router.post(`/messages`, async (req, res) => {
         res.json({ success: false, message: err.message });
     }
 });
+
+
+router.post(`/background`, async (req, res) => {
+    const { bg, email, emailSend } = req.body
+    try {
+        const filter = { email: email };
+        const update = { $set: { 'conversations.$[conv].bg': bg } };
+        const options = { arrayFilters: [{ 'conv.email': emailSend }] };
+
+        await Messages.updateOne(filter, update, options);
+
+        res.json({ success: true })
+    } catch (err) {
+        console.log(err)
+        res.json({ success: false, message: err })
+    }
+})
 
 module.exports = router;

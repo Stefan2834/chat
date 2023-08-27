@@ -7,16 +7,13 @@ import Image from 'next/image';
 import Info from '@/components/messages/info';
 
 import emoji from '../../../svg/black/emoji-emotions.svg'
+import files from '../../../svg/black/image-files.svg'
 import send from '../../../svg/black/send.svg'
 import infoPhoto from '../../../svg/black/info.svg'
 
 import { getSession } from "next-auth/react"
 import { useRouter } from 'next/router';
 import { useDefault } from '@/contexts/Default';
-
-import p1 from '../../../svg/theme/p1.jpg'
-import p2 from '../../../svg/theme/p2.jpg'
-import p3 from '../../../svg/theme/p3.jpg'
 
 
 interface MessagePageProps {
@@ -29,7 +26,7 @@ interface MessagePageProps {
    avatar: string,
    username: string,
    hasSeen: boolean,
-   bg: string,
+   background: string,
    params: string | null,
    err: string | null | undefined,
 }
@@ -58,7 +55,7 @@ const formatTimestamp = (timestamp: number) => {
 
 
 
-export default function Messages({ messagesData, avatar, params, username, hasSeen, err, bg }: MessagePageProps) {
+export default function Messages({ messagesData, avatar, params, username, hasSeen, err, background }: MessagePageProps) {
    const router = useRouter()
 
    const { user, socket } = useDefault()
@@ -72,6 +69,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
    const [seen, setSeen] = useState<boolean>(hasSeen)
    const [messages, setMessages] = useState(messagesData)
    const [info, setInfo] = useState<boolean>(false)
+   const [bg, setBg] = useState<string>(background)
 
 
 
@@ -132,6 +130,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
       setMessages(messagesData)
       setHasMoreData(messagesData.length < 20 ? false : true)
       setSeen(hasSeen)
+      setBg(background)
       setInfo(false)
       const container = scrollRef?.current;
       if (container) container.scrollTop = 0
@@ -221,14 +220,14 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
    return (
       <>
-         <div className='w-full h-full'>
+         <div className='w-full h-[calc(100vh-120px)] mobile:h-full'>
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={() => setError(null)}>
                <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
                   {error}
                </Alert>
             </Snackbar>
-            <Sidebar email={user?.email} socket={socket} />
-            <div className='w-[calc(100%-384px)] h-screen relative flex flex-col ml-96'>
+            <Sidebar email={user?.email} socket={socket} className='hidden mobile:block' />
+            <div className='w-full h-screen relative flex flex-col ml-0 mobile:w-[calc(100%-384px)] mobile:ml-96'>
                {err === "User don't exist" ? (
                   <div className='w-full h-screen bg-red-400 flex flex-row items-center justify-center'>
                      <div className=''>User don't exist</div>
@@ -248,11 +247,13 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                         </Button>
                      </div>
                      {info ? (
-                        <Info />
+                        <Info activeBg={bg} setBg={(bg) => setBg(bg)}
+                           setInfo={(value => setInfo(value))} setError={(value => setError(value))}
+                           email={user?.email || ''} emailSend={params || ''} />
                      ) : (
                         <>
-                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10'
-                            ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
+                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-[calc(100vh-280px)] mobile:h-full'
+                              ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
                            >
                               {seen && messages[0]?.email === user?.email && (
                                  <div className='w-full text-right pr-4 text-white'>Seen</div>
@@ -274,7 +275,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                                 <div className='mr-2'>{mess.message}</div>
                                              </div>
                                              {mess?.loading && (
-                                                <CircularProgress size={16} sx={{ ml: 1, mr: 1, color:'white' }} />
+                                                <CircularProgress size={16} sx={{ ml: 1, mr: 1, color: 'white' }} />
                                              )}
                                           </div>
                                           {toOld && (
@@ -307,7 +308,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                  }
                               })}
                               {hasMoreData ? (
-                                 <CircularProgress sx={{ m: 2, color:'white' }} />
+                                 <CircularProgress sx={{ m: 2, color: 'white' }} />
                               ) : (
                                  <div className='w-[calc(100%+40px)] -ml-10 mb-2'>
                                     <div className='w-full h-[calc(100vh-150px)] flex flex-col items-center justify-center'>
@@ -322,7 +323,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                  <Image src={emoji} alt='Emoji' width={35} height={35} className='cursor-pointer' />
                               </IconButton>
                               <IconButton aria-label="Example" sx={{ mr: 2 }}>
-                                 <Image src={emoji} alt='Emoji' width={35} height={35} className='cursor-pointer' />
+                                 <Image src={files} alt='Emoji' width={35} height={35} className='cursor-pointer' />
                               </IconButton>
                               <TextField id="outlined-basic" fullWidth label="Type..." variant="outlined"
                                  inputProps={{
@@ -350,8 +351,6 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (context) => {
    const { email } = context.query;
    const session = await getSession(context);
-   // const server = 'https://chat-vfyj.onrender.com'
-   // const server = 'http://localhost:9000'
    const server = process.env.NEXT_PUBLIC_SERVER || ''
    const messages = await axios.post(`${server}/messages/messages/`, {
       email: session?.user?.email,
@@ -365,7 +364,7 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
             avatar: messages?.data?.avatar || '',
             username: messages?.data?.username || '',
             hasSeen: messages?.data?.seen || false,
-            bg: messages?.data.bg || '/_next/static/media/p2.2b385e7f.jpg',
+            background: messages?.data.bg || 'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg',
             params: email as string,
             err: null,
             revalidate: 1,
@@ -377,7 +376,7 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
          avatar: '',
          username: '',
          hasSeen: false,
-         bg: '',
+         background: '',
          params: null,
          err: messages?.data?.message
       }

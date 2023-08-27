@@ -32,7 +32,7 @@ function formatTimeAgo(timestamp: number) {
     }
 }
 
-export default function Sidebar({ email, socket }: { email: string | null | undefined, socket: Socket | null }) {
+export default function Sidebar({ email, socket, className }: { email: string | null | undefined, socket: Socket | null, className?:string }) {
     const { sidebar, setSidebar, isLoading, error, setError, hasMoreData, setHasMoreData } = useSideData(email);
     const scrollRef = useRef<HTMLDivElement | null>(null)
     const loading = useRef<boolean>(false)
@@ -126,7 +126,7 @@ export default function Sidebar({ email, socket }: { email: string | null | unde
 
 
     return (
-        <Paper elevation={3} className='w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start bg-white'
+        <Paper elevation={3} className={`w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start bg-white ${className}`}
             ref={scrollRef}
         >
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={handleClose}>

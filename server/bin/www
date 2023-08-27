@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
           username: data.userReceive,
           seen: false,
           avatar: data.avatarReceive,
-          bg: '/_next/static/media/p2.2b385e7f.jpg',
+          bg: 'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg',
           messages: [message],
         }
         await Messages.updateOne(
@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
           username: data.userSend,
           seen: false,
           avatar: data.avatarSend,
-          bg: '/_next/static/media/p2.2b385e7f.jpg',
+          bg: 'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg',
           messages: [message],
         }
         await Messages.updateOne(
