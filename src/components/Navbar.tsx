@@ -156,27 +156,27 @@ export default function Navbar() {
                 </Toolbar>
               </AppBar>
             </Paper>
-            <div style={{ position: 'sticky', left: 0, bottom: 0, zIndex: 20, width: '100vw', height: '56px', backgroundColor: 'red' }}>
-              <BottomNavigation
-                showLabels
-              >
-                <BottomNavigationAction onClick={() => changePath('/main/home')} label="Home"
-                  icon={<Image alt='Poza' width={30} height={30} src={router.asPath === '/main/home' ? homeActive : home} />}
-                />
-                <BottomNavigationAction onClick={() => changePath('/main/messages')} label="Messages"
-                  icon={<Image alt='Poza' width={30} height={30} src={router.asPath.includes('/main/messages') ? messageActive : message} />}
-                />
-                <BottomNavigationAction onClick={() => changePath('/main/users')} label="Users"
-                  icon={<Image alt='Poza' width={30} height={30} src={router.asPath === '/main/users' ? searchActive : search} />}
-                />
-                <BottomNavigationAction onClick={() => changePath('/main/notifications')} label="Notifications"
-                  icon={<Image alt='Poza' width={30} height={30} src={router.asPath === '/main/notifications' ? mailActive : mail} />}
-                />
-                <BottomNavigationAction onClick={() => changePath(`/main/users/${user?.email}`)} label="Profile"
-                  icon={<Image alt='Poza' width={30} height={30} src={router.asPath === `/main/users/${user?.email}` ? userActive : userImg} />}
-                />
-              </BottomNavigation>
-            </div>
+          <div style={{ position: 'fixed', left: 0, bottom:0 , zIndex: 20, width: '100vw', height: '56px', backgroundColor: 'red' }}>
+            <BottomNavigation
+              showLabels
+            >
+              <BottomNavigationAction onClick={() => changePath('/main/home')} label="Home"
+                icon={<Image alt='Poza' width={30} height={30} src={router.asPath === '/main/home' ? homeActive : home} />}
+              />
+              <BottomNavigationAction onClick={() => changePath('/main/messages')} label="Messages"
+                icon={<Image alt='Poza' width={30} height={30} src={router.asPath.includes('/main/messages') ? messageActive : message} />}
+              />
+              <BottomNavigationAction onClick={() => changePath('/main/users')} label="Users"
+                icon={<Image alt='Poza' width={30} height={30} src={router.asPath === '/main/users' ? searchActive : search} />}
+              />
+              <BottomNavigationAction onClick={() => changePath('/main/notifications')} label="Notifications"
+                icon={<Image alt='Poza' width={30} height={30} src={router.asPath === '/main/notifications' ? mailActive : mail} />}
+              />
+              <BottomNavigationAction onClick={() => changePath(`/main/users/${user?.email}`)} label="Profile"
+                icon={<Image alt='Poza' width={30} height={30} src={router.asPath === `/main/users/${user?.email}` ? userActive : userImg} />}
+              />
+            </BottomNavigation>
+          </div>
           </Box>
         </>
       )}
