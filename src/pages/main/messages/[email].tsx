@@ -234,12 +234,12 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                   </div>
                ) : (
                   <>
-                     <div className='sticky top-0 left-0 flex items-center justify-between bg-white w-full h-auto'>
+                     <div className='sticky top-0 left-0 flex items-center justify-between bg-white w-full h-auto mobile:h-14'>
                         <Button variant='text' className='cursor-pointer'
                            sx={{ textTransform: "none", color: "black", fontWeight: "600", fontSize: "16px", p: 3, display: 'flex', justifyContent: 'flex-start' }}
                            onClick={() => router.push(`/main/users/${params}`)}
                         >
-                           <Avatar src={avatar} sx={{ width: 50, height: 50 }} />
+                           <Avatar src={avatar} sx={{ width: 50, height: 50, '@media (max-width:1000px)': {width:30, height:30} }} />
                            <div className='ml-2 truncate'>{params}</div>
                         </Button>
                         <Button variant='text' sx={{ textTransform: 'none', height: '50px', mr: 3 }} onClick={() => setInfo(!info)}>
