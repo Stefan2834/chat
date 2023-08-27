@@ -222,7 +222,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
    return (
       <>
-         <div className='w-full h-screen'>
+         <div className='w-full h-full'>
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={() => setError(null)}>
                <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
                   {error}
@@ -261,7 +261,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            email={user?.email || ''} emailSend={params || ''} />
                      ) : (
                         <>
-                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-120px)] mobile:bottom-0 mobile:sticky'
+                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-120px)] mobile:sticky mobile:bottom-0'
                               ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
                            >
                               {seen && messages[0]?.email === user?.email && (
