@@ -23,3 +23,16 @@
 .navbarClosed {
     width: 110px;
 }
+.custom1 {
+    transform: translateX(-100vw);
+    visibility: hidden;
+    height:100vh;
+    transition: 600ms ease-in-out;
+    position: absolute;
+}
+.custom2 {
+    height: 100vh;
+    transition: 600ms ease-in-out;
+    position: absolute;
+    visibility: visible;
+}

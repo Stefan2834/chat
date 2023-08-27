@@ -9,6 +9,7 @@ body {
 }
 html {
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 * {
     box-sizing: border-box;
@@ -51,5 +52,47 @@ html {
         font-size: 18px !important;;
         height:18px !important;
         line-height: 18px !important;
+    }
+    .page-left-enter,
+    .page-left-exit {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .page-left-enter {
+      transform: translateX(-100%);
+    }
+    .page-left-enter-active,
+    .page-left-exit-active {
+      transform: translateX(0);
+      transition: transform 600ms ease-in-out;
+    }
+    .page-left-exit {
+      transform: translateX(0);
+    }
+    .page-left-exit-active {
+      transform: translateX(-100%);
+      transition: transform 600ms ease-in-out;
+    }
+    .page-right-enter,
+    .page-right-exit {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .page-right-enter {
+      transform: translateX(100%);
+    }
+    .page-right-enter-active,
+    .page-right-exit-active {
+      transform: translateX(0);
+      transition: transform 600ms ease-in-out;
+    }
+    .page-right-exit {
+      transform: translateX(0);
+    }
+    .page-right-exit-active {
+      transform: translateX(100%);
+      transition: transform 600ms ease-in-out;
     }
 }

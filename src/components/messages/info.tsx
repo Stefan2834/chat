@@ -49,9 +49,9 @@ export default function Info({ activeBg, setBg, setInfo, setError, email, emailS
   }
 
   return (
-    <div className='w-full bg-white relative flex items-center justify-start flex-col h-full overflow-auto'>
+    <div className='w-full bg-white flex items-center justify-start flex-col h-full overflow-auto'>
       <div className="font-semibold text-base mt-2">Background</div>
-      <div className='flex justify-around w-full items-center mt-10 flex-wrap'>
+      <div className='flex justify-around w-full h-full items-center mt-10 flex-wrap'>
         {bgAvailable?.map((background: string, index: number) => {
           if (background === newBg) {
             return (
@@ -68,8 +68,7 @@ export default function Info({ activeBg, setBg, setInfo, setError, email, emailS
             )
           }
         })}
-      </div>
-      <div className='flex justify-evenly items-center w-full mb-4'>
+      <div className='flex justify-evenly items-center w-full pb-8'>
         <Button variant="contained" sx={{ textTransform: 'none', mt: '25px', fontSize: '22px' }}
           onClick={() => { modifyBg(newBg) }} disabled={loading}
         >
@@ -93,6 +92,7 @@ export default function Info({ activeBg, setBg, setInfo, setError, email, emailS
         >
           Back
         </Button>
+      </div>
       </div>
     </div>
   )

@@ -126,7 +126,7 @@ export default function Sidebar({ email, socket, className }: { email: string | 
 
 
     return (
-        <Paper elevation={3} className={`w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start bg-white ${className}`}
+        <Paper elevation={3} className={`w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start bg-white ${className} mobile:w-full mobile:mt-16`}
             ref={scrollRef}
         >
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={handleClose}>
@@ -172,7 +172,7 @@ export default function Sidebar({ email, socket, className }: { email: string | 
             {isLoading && (
                 <>
                     {Array.from({ length: 15 }).map((_, index: number) => (
-                        <Button key={index} variant='text' sx={{ justifyContent: "flex-start", margin: "16px 0" }} className='h-20 w-full bg-red-400'>
+                        <Button key={index} variant='text' sx={{ justifyContent: "flex-start", margin: "16px 0" }} className='h-20 w-full'>
                             <Skeleton sx={{ bgcolor: 'grey.400' }} variant="circular" width={50} height={50} />
                             <div className='h-full flex-col flex items-start justify-around ml-2'>
                                 <Skeleton sx={{ bgcolor: 'grey.400' }} variant="rounded" width={250} height={26} />

@@ -58,6 +58,7 @@ export default function Navbar() {
   }, [])
 
 
+
   const changePath = (path: string) => {
     router.push(path)
   }
@@ -138,11 +139,13 @@ export default function Navbar() {
           </Button>
         </Paper>
       ) : (
-        <Box sx={{ pt: 8, zIndex: '20' }}>
-          <Paper sx={{ position: 'fixed', left: 0, top: 0, right: 0, zIndex: 20 }} elevation={3}>
+        <Box sx={{ pt: 8, zIndex: '20' }}
+          className={router.route === '/main/messages/[email]' ? `${styles.custom1}` : `${styles.custom2}`}
+        >
+          <Paper sx={{ position: 'fixed', left: 0, top: 0, zIndex: 20, width: '100vw' }} elevation={3}>
             <AppBar position="static" sx={{ backgroundColor: "#eee" }}>
               <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Image alt='Poza' src={home} width={35} height={35} className='bg-red-400' />
+                <Image alt='Poza' src={home} width={35} height={35} className='' />
                 <Image onClick={() => changePath('/main/settings')} className='cursor-pointer'
                   alt='Poza'
                   src={router.asPath === '/main/settings' ? settingsActive : settings}
@@ -151,7 +154,7 @@ export default function Navbar() {
               </Toolbar>
             </AppBar>
           </Paper>
-          <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20 }} elevation={10}>
+          <Paper sx={{ position: 'fixed', bottom: 0, left: 0, zIndex: 20, width: '100vw' }} elevation={10}>
             <BottomNavigation
               showLabels
             >
@@ -159,7 +162,7 @@ export default function Navbar() {
                 icon={<Image alt='Poza' width={30} height={30} src={router.asPath === '/main/home' ? homeActive : home} />}
               />
               <BottomNavigationAction onClick={() => changePath('/main/messages')} label="Messages"
-                icon={<Image alt='Poza' width={30} height={30} src={router.asPath === '/main/messages' ? messageActive : message} />}
+                icon={<Image alt='Poza' width={30} height={30} src={router.asPath.includes('/main/messages') ? messageActive : message} />}
               />
               <BottomNavigationAction onClick={() => changePath('/main/users')} label="Users"
                 icon={<Image alt='Poza' width={30} height={30} src={router.asPath === '/main/users' ? searchActive : search} />}

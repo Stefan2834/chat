@@ -56,6 +56,7 @@ const formatTimestamp = (timestamp: number) => {
 
 
 export default function Messages({ messagesData, avatar, params, username, hasSeen, err, background }: MessagePageProps) {
+
    const router = useRouter()
 
    const { user, socket } = useDefault()
@@ -220,26 +221,28 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
    return (
       <>
-         <div className='w-full h-full mobile:h-[calc(100vh-120px)]'>
+         <div className='w-full h-screen'>
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={() => setError(null)}>
                <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
                   {error}
                </Alert>
             </Snackbar>
-            <Sidebar email={user?.email} socket={socket} className='block mobile:hidden' />
-            <div className=' w-[calc(100%-384px)] h-screen relative flex flex-col ml-96 mobile:w-full mobile:ml-0'>
+            {window.innerWidth >= 1000} {
+               <Sidebar email={user?.email} socket={socket} className='block mobile:hidden' />
+            }
+            <div className=' w-[calc(100%-384px)] h-full relative flex flex-col ml-96 mobile:w-full mobile:ml-0'>
                {err === "User don't exist" ? (
-                  <div className='w-full h-screen bg-red-400 flex flex-row items-center justify-center'>
+                  <div className='w-full h-screen flex flex-row items-center justify-center'>
                      <div className=''>User don't exist</div>
                   </div>
                ) : (
                   <>
-                     <div className='sticky top-0 left-0 flex items-center justify-between bg-white w-full h-auto mobile:h-14'>
+                     <div className='sticky top-0 left-0 flex items-center justify-between w-full h-auto mobile:h-14'>
                         <Button variant='text' className='cursor-pointer'
                            sx={{ textTransform: "none", color: "black", fontWeight: "600", fontSize: "16px", p: 3, display: 'flex', justifyContent: 'flex-start' }}
                            onClick={() => router.push(`/main/users/${params}`)}
                         >
-                           <Avatar src={avatar} sx={{ width: 50, height: 50, '@media (max-width:1000px)': {width:30, height:30} }} />
+                           <Avatar src={avatar} sx={{ width: 50, height: 50, '@media (max-width:1000px)': { width: 30, height: 30 } }} />
                            <div className='ml-2 truncate'>{params}</div>
                         </Button>
                         <Button variant='text' sx={{ textTransform: 'none', height: '50px', mr: 3 }} onClick={() => setInfo(!info)}>
@@ -252,7 +255,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            email={user?.email || ''} emailSend={params || ''} />
                      ) : (
                         <>
-                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-240px)]'
+                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-120px)]'
                               ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
                            >
                               {seen && messages[0]?.email === user?.email && (
@@ -269,7 +272,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                     return (
                                        <>
                                           <div className='w-auto max-w-[60%] p-0.5 self-end mr-2 flex justify-center items-center' key={index}>
-                                             <div className={`flex flex-col text-right bg-white p-3 overflow-hidden rounded-3xl items-center justify-start trans`}
+                                             <div className={`flex flex-col text-right bg-white p-3 overflow-hidden rounded-3xl items-center justify-start`}
                                                 style={{ borderTopRightRadius: borderTop, borderBottomRightRadius: borderBottom }}
                                              >
                                                 <div className='mr-2'>{mess.message}</div>
@@ -319,7 +322,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                               )}
                            </div>
                            <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }}
-                              className='sticky bottom-0 w-full flex items-center bg-white justify-center px-8 py-3 mobile:fixed mobile:bottom-14 mobile:py-2 mobile:px-3'
+                              className='sticky bottom-0 w-full flex items-center bg-white justify-center px-8 py-3 mobile:fixed mobile:py-2 mobile:px-3'
                            >
                               <IconButton aria-label="Example" sx={{
                                  "@media (min-width: 1000px)": {
@@ -344,7 +347,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                  inputRef={submitRef}
                               />
                               <IconButton aria-label="Example" type='submit'
-                                 sx={{ "@media (min-width: 1000px)": { mr: 2 }, mr:-1 }}
+                                 sx={{ "@media (min-width: 1000px)": { mr: 2 }, mr: -1 }}
                               >
                                  <Image src={send} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
                               </IconButton>
