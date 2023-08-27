@@ -10,6 +10,7 @@ import emoji from '../../../svg/black/emoji-emotions.svg'
 import files from '../../../svg/black/image-files.svg'
 import send from '../../../svg/black/send.svg'
 import infoPhoto from '../../../svg/black/info.svg'
+import backPhoto from '../../../svg/black/back.svg'
 
 import { getSession } from "next-auth/react"
 import { useRouter } from 'next/router';
@@ -238,6 +239,11 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                ) : (
                   <>
                      <div className='sticky top-0 left-0 flex items-center justify-between w-full h-auto mobile:h-14'>
+                        <Button variant='text' sx={{ textTransform: 'none', height: '50px', display: 'none', '@media (max-width:1000px)': { display: 'inherit' } }}
+                           onClick={() => router.push('/main/messages')}
+                        >
+                           <Image src={backPhoto} alt='Info' width={35} height={35} />
+                        </Button>
                         <Button variant='text' className='cursor-pointer'
                            sx={{ textTransform: "none", color: "black", fontWeight: "600", fontSize: "16px", p: 3, display: 'flex', justifyContent: 'flex-start' }}
                            onClick={() => router.push(`/main/users/${params}`)}
