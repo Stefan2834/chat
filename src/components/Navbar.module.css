@@ -25,7 +25,6 @@
 }
 .custom1 {
     transform: translateX(-100vw);
-    visibility: visible;
     height:100vh;
     transition: 600ms ease-in-out;
     position: absolute;
@@ -35,6 +34,5 @@
     transition: 600ms ease-in-out;
     position: fixed;
     transform: translateX(0);
-    visibility: visible;
-    top:0;
+    bottom:0;
 }
