@@ -156,7 +156,7 @@ export default function Navbar() {
                 </Toolbar>
               </AppBar>
             </Paper>
-            <div style={{ position: 'sticky', left: 0, top: 'calc(100vh - 112px)', zIndex: 20, width: '100vw', height: '56px' }}>
+            <div style={{ position: 'fixed', left: 0, bottom: 0, zIndex: 20, width: '100vw', height: '56px' }}>
               <BottomNavigation
                 showLabels
               >
