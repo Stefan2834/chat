@@ -238,7 +238,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                   </div>
                ) : (
                   <>
-                     <div className='sticky top-0 left-0 flex items-center justify-between w-full h-auto mobile:h-14'>
+                     <div className='sticky top-0 left-0 flex items-center justify-between w-full h-auto mobile:h-14 mobile:fixed z-10'>
                         <Button variant='text' sx={{ textTransform: 'none', height: '50px', display: 'none', '@media (max-width:1000px)': { display: 'inherit' } }}
                            onClick={() => router.push('/main/messages')}
                         >
