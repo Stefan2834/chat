@@ -33,6 +33,8 @@
 .custom2 {
     height: 100vh;
     transition: 600ms ease-in-out;
-    position: absolute;
+    position: fixed;
+    transform: translateX(0);
     visibility: visible;
+    top:0;
 }
