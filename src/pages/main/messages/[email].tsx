@@ -220,27 +220,27 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
    return (
       <>
-         <div className='w-full h-[calc(100vh-120px)] mobile:h-full'>
+         <div className='w-full h-full mobile:h-[calc(100vh-120px)]'>
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={() => setError(null)}>
                <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
                   {error}
                </Alert>
             </Snackbar>
-            <Sidebar email={user?.email} socket={socket} className='hidden mobile:block' />
-            <div className='w-full h-screen relative flex flex-col ml-0 mobile:w-[calc(100%-384px)] mobile:ml-96'>
+            <Sidebar email={user?.email} socket={socket} className='block mobile:hidden' />
+            <div className=' w-[calc(100%-384px)] h-screen relative flex flex-col ml-96 mobile:w-full mobile:ml-0'>
                {err === "User don't exist" ? (
                   <div className='w-full h-screen bg-red-400 flex flex-row items-center justify-center'>
                      <div className=''>User don't exist</div>
                   </div>
                ) : (
                   <>
-                     <div className='sticky top-0 left-0 flex items-center justify-between bg-white w-full h-20'>
+                     <div className='sticky top-0 left-0 flex items-center justify-between bg-white w-full h-auto'>
                         <Button variant='text' className='cursor-pointer'
                            sx={{ textTransform: "none", color: "black", fontWeight: "600", fontSize: "16px", p: 3, display: 'flex', justifyContent: 'flex-start' }}
                            onClick={() => router.push(`/main/users/${params}`)}
                         >
                            <Avatar src={avatar} sx={{ width: 50, height: 50 }} />
-                           <div className='ml-2'>{params}</div>
+                           <div className='ml-2 truncate'>{params}</div>
                         </Button>
                         <Button variant='text' sx={{ textTransform: 'none', height: '50px', mr: 3 }} onClick={() => setInfo(!info)}>
                            <Image src={infoPhoto} alt='Info' width={35} height={35} />
@@ -252,7 +252,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            email={user?.email || ''} emailSend={params || ''} />
                      ) : (
                         <>
-                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-[calc(100vh-280px)] mobile:h-full'
+                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-280px)]'
                               ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
                            >
                               {seen && messages[0]?.email === user?.email && (
@@ -318,22 +318,35 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                  </div>
                               )}
                            </div>
-                           <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} className='fixed bottom-14 w-full bg-white flex items-center justify-center px-8 py-3 mobile:sticky mobile:bottom-0'>
-                              <IconButton aria-label="Example" sx={{ mr: 2 }}>
-                                 <Image src={emoji} alt='Emoji' width={35} height={35} className='cursor-pointer' />
+                           <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }}
+                              className='sticky bottom-0 w-full flex items-center justify-center px-8 py-3 mobile:fixed mobile:bottom-14 mobile:py-2 mobile:px-3'
+                           >
+                              <IconButton aria-label="Example" sx={{
+                                 "@media (min-width: 1000px)": {
+                                    mr: 2,
+                                 },
+                              }}>
+                                 <Image src={emoji} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
                               </IconButton>
-                              <IconButton aria-label="Example" sx={{ mr: 2 }}>
-                                 <Image src={files} alt='Emoji' width={35} height={35} className='cursor-pointer' />
+                              <IconButton aria-label="Example" sx={{
+                                 "@media (min-width: 1000px)": {
+                                    mr: 2,
+                                 },
+                              }}>
+                                 <Image src={files} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
                               </IconButton>
                               <TextField id="outlined-basic" fullWidth label="Type..." variant="outlined"
                                  inputProps={{
                                     maxLength: 200,
+                                    style: { height: '10px', fontSize:'14px' }
                                  }}
                                  required
                                  inputRef={submitRef}
                               />
-                              <IconButton aria-label="Example" sx={{ ml: 3 }} type='submit' >
-                                 <Image src={send} alt='Emoji' width={35} height={35} className='cursor-pointer' />
+                              <IconButton aria-label="Example" type='submit'
+                                 sx={{ "@media (min-width: 1000px)": { mr: 2 } }}
+                              >
+                                 <Image src={send} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
                               </IconButton>
                            </form>
                         </>

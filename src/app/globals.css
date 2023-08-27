@@ -36,3 +36,10 @@ html {
 .photo-hover:hover .photo-text {
     opacity: 1;
 }
+
+@media screen and (max-width:1000px) {
+    .msg-img {
+        width:25px;
+        height:25px;
+    }
+}
