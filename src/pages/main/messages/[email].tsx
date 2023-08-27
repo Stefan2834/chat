@@ -136,7 +136,6 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
       setInfo(false)
       const container = scrollRef?.current;
       if (container) container.scrollTop = 0
-      window.screenTop = 0
       const room = [user?.email, params].sort().join('-')
 
       socket?.emit('join', { room })
@@ -318,7 +317,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                  }
                               })}
                               {hasMoreData ? (
-                                 <CircularProgress sx={{ m: 2, color: 'white', marginLeft:"-40px"}} />
+                                 <CircularProgress sx={{ m: 2, color: 'white', marginLeft: "-40px" }} />
                               ) : (
                                  <div className='w-[calc(100%+40px)] -ml-10 mb-2'>
                                     <div className='w-full h-[calc(100vh-150px)] flex flex-col items-center justify-center'>
