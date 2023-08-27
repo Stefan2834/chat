@@ -30,9 +30,8 @@
     position: absolute;
 }
 .custom2 {
-    height: 100vh;
+    height: 100vh; 
     transition: 600ms ease-in-out;
+    transform: translate(0vw);
     position: fixed;
-    transform: translateX(0);
-    bottom:0;
 }

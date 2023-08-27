@@ -139,10 +139,11 @@ export default function Navbar() {
           </Button>
         </Paper>
       ) : (
-        <Box sx={{ pt: 8, zIndex: '20' }}
+        <Box sx={{ zIndex: '20' }}
           className={router.route === '/main/messages/[email]' ? `${styles.custom1}` : `${styles.custom2}`}
         >
-          <Paper sx={{ position: 'fixed', left: 0, top: 0, zIndex: 20, width: '100vw' }} elevation={3}>
+          <Paper sx={{ position: 'fixed', left: 0, top: 0, zIndex: 20, width: '100vw' }} elevation={3}
+          >
             <AppBar position="static" sx={{ backgroundColor: "#eee" }}>
               <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Image alt='Poza' src={home} width={35} height={35} className='' />
@@ -154,7 +155,8 @@ export default function Navbar() {
               </Toolbar>
             </AppBar>
           </Paper>
-          <Paper sx={{ position: 'fixed', bottom: 0, left: 0, zIndex: 20, width: '100vw' }} elevation={10}>
+          <Paper sx={{ position: 'fixed', bottom: 0, left: 0, zIndex: 20, width: '100vw' }} elevation={10}
+          >
             <BottomNavigation
               showLabels
             >
