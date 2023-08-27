@@ -141,7 +141,7 @@ export default function Navbar() {
       ) : (
         <>
           <Box sx={{ zIndex: '20', height: '100vh' }}
-            className={router.route === '/main/messages/[email]' ? `${styles.custom1}` : `${styles.custom2}`}
+            className={router.route === '/main/messages/[email]' ? `${styles.custom1}` : `${styles.custom2} translate-x-0`}
           >
             <Paper sx={{ position: 'fixed', left: 0, top: 0, zIndex: 20, width: '100vw' }} elevation={3}
             >
