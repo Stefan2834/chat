@@ -27,8 +27,11 @@
     translate:-100vw;
     transition: 600ms ease-in-out;
     position:absolute;
+    transform: translateZ(0);
 }
 .custom2 {
     position: fixed;
+    transform: translateZ(0);
+    translate: 0;
     transition: 600ms ease-in-out;
 }
