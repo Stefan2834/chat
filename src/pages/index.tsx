@@ -14,7 +14,7 @@ export default function Index() {
             axios.post(`${server}/users`, {
                 name: user?.name,
                 email: user?.email,
-                image: user?.image
+                image: user?.avatar
             })
                 .then(data => {
                     console.log(data)
