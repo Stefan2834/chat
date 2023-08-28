@@ -208,7 +208,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
       const newMessage = {
          emailSend: user?.email,
          emailReceive: params,
-         avatarSend: user?.image,
+         avatarSend: user?.avatar,
          avatarReceive: avatar,
          userSend: user?.name,
          userReceive: username,

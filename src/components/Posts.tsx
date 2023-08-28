@@ -5,6 +5,7 @@ import Link from 'next/link'
 import like from '../svg/black/like.svg'
 import likeActive from '../svg/colors/like.svg'
 import axios from 'axios'
+import { useDefault } from '@/contexts/Default'
 
 interface Posts {
     src: string,
@@ -22,20 +23,14 @@ interface Posts {
 interface PostsProps {
     selectedPhoto: Posts | null;
     onClose: () => void;
-    user: null | User;
     getComment: () => void;
     modifyLike: () => void
 }
 
-interface User {
-    email: string | null,
-    image: string | null,
-    name: string | null
-}
 interface Comm {
     email: string,
     date: string,
-    image: string,
+    avatar: string,
     message: string
 }
 
@@ -50,8 +45,9 @@ function getCurrentDate() {
     return `${year}-${month}-${day} ${hour}:${minute}`;
 }
 
-export default function Posts({ selectedPhoto, onClose, user, getComment, modifyLike }: PostsProps) {
+export default function Posts({ selectedPhoto, onClose, getComment, modifyLike }: PostsProps) {
     const commentRef = useRef<any>(null)
+    const { user } = useDefault()
     const [loading, setLoading] = useState(false)
 
     const handleComment = (id: { $oid: string }) => {
@@ -61,7 +57,7 @@ export default function Posts({ selectedPhoto, onClose, user, getComment, modify
             email: user?.email,
             photoEmail: selectedPhoto?.email,
             date: date,
-            image: user?.image,
+            image: user?.avatar,
             id: id,
             message: commentRef.current?.value
         }).then(data => {
@@ -124,7 +120,7 @@ export default function Posts({ selectedPhoto, onClose, user, getComment, modify
                                 key={index} elevation={1}
                                 className='cursor-pointer w-full p-1 flex items-center'
                             >
-                                <Avatar src={comm?.image} sx={{ height: 60, width: 60 }} />
+                                <Avatar src={comm?.avatar} sx={{ height: 60, width: 60 }} />
                                 <div className='flex flex-col items-start justify-center ml-2 overflow-hidden'>
                                     <div className="font-light text-sm">{comm?.date}</div>
                                     <Link href={`/main/users/${comm?.email}`} className='font-semibold text-lg'>{comm?.email}</Link>

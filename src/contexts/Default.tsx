@@ -50,7 +50,7 @@ interface DefaultProviderProps {
 type User = {
     email: string | null,
     name: string | null,
-    image: string | null
+    avatar: string | null
 }
 
 
@@ -76,13 +76,13 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
             setUser({
                 email: session?.user?.email || null,
                 name: session?.user?.name || null,
-                image: session?.user?.image || null,
+                avatar: session?.user?.image || null,
             })
         } else {
             setUser(null)
             console.log(status)
-            setLoading(false)
             router.push("/");
+            setLoading(false)
         }
     }, [status]);
 

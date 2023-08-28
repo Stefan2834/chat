@@ -14,7 +14,7 @@ interface UserPageProps {
         _id: string;
         email: string;
         name: string;
-        image: string;
+        avatar: string;
         posts: Posts[]
     } | null;
     params: string | null
@@ -35,7 +35,7 @@ interface Posts {
 
 interface Comm {
     email: string,
-    image: string,
+    avatar: string,
     date: string,
     message: string
 }
@@ -112,14 +112,13 @@ export default function Profile({ profileData, params }: UserPageProps) {
                     {selectedPhoto && (
                         <Posts selectedPhoto={selectedPhoto}
                             onClose={() => setSelectedPhoto(null)}
-                            user={user}
                             getComment={() => getComment()}
                             modifyLike={() => modifyLike()}
                         />
                     )}
                     <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', width: "auto", maxWidth: "100%" }} >
                         <div className='flex items-center justify-center'>
-                            <Avatar alt='avatar' src={profile?.image} sx={{ width: 140, height: 140 }} />
+                            <Avatar alt='avatar' src={profile?.avatar} sx={{ width: 140, height: 140 }} />
                             <div className='flex flex-col h-28 ml-8'>
                                 {user?.email === params && (
                                     <div className='flex w-full justify-around mb-4'>
