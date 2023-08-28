@@ -147,7 +147,7 @@ export default function Navbar() {
             >
               <AppBar position="static" sx={{ backgroundColor: "#eee" }}>
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Image alt='Poza' src={home} width={35} height={35} className='' />
+                  <Image alt='Poza' src={home} width={35} height={35} onClick={() => signOut()} />
                   <Image onClick={() => changePath('/main/settings')} className='cursor-pointer'
                     alt='Poza'
                     src={router.asPath === '/main/settings' ? settingsActive : settings}
