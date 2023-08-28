@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useReducer, Reac
 import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router';
 import io, { Socket } from 'socket.io-client';
+import { useSideData } from '@/customHooks/useSidebar';
 import DynamicWidthComponent from '@/components/DynamicWidth';
 
 interface DefaultContextValue {
@@ -15,7 +16,6 @@ interface DefaultContextValue {
     setNavOpen: (navOpen: boolean) => void,
     darkTheme: boolean,
     setDarkTheme: (darkTheme: boolean) => void,
-    socket:Socket | null, 
 }
 type Action = { type: 'test'; payload: { number: number } };
 type Dispatch = (action: Action) => void;
@@ -64,19 +64,8 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
     const [loading, setLoading] = useState<boolean>(true)
     const [navOpen, setNavOpen] = useState<boolean>(true)
     const [darkTheme, setDarkTheme] = useState<boolean>(true)
-    const [socket, setSocket] = useState<Socket | null>(null)
     const server: String = process.env.NEXT_PUBLIC_SERVER || ''
 
-
-    useEffect(() => {
-        const newSocket = io(process.env.NEXT_PUBLIC_SERVER || '', {
-            transports: ['websocket']
-        });
-        setSocket(newSocket)
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [])
 
     useEffect(() => {
         if (status === "loading") {
@@ -124,7 +113,6 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
         user, setUser,
         navOpen, setNavOpen,
         darkTheme, setDarkTheme,
-        socket
     };
 
     return (

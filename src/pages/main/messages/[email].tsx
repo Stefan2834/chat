@@ -15,6 +15,7 @@ import backPhoto from '../../../svg/black/back.svg'
 import { getSession } from "next-auth/react"
 import { useRouter } from 'next/router';
 import { useDefault } from '@/contexts/Default';
+import { useSocket } from '@/contexts/Socket';
 
 
 interface MessagePageProps {
@@ -60,7 +61,8 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
    const router = useRouter()
 
-   const { user, socket } = useDefault()
+   const { user } = useDefault()
+   const { socket } = useSocket()
 
    const submitRef = useRef<HTMLInputElement | null>(null);
    const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -229,7 +231,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                </Alert>
             </Snackbar>
             {window.innerWidth >= 1000} {
-               <Sidebar email={user?.email} socket={socket} className='block mobile:hidden' />
+               <Sidebar className='block mobile:hidden' />
             }
             <div className=' w-[calc(100%-384px)] h-full relative flex flex-col ml-96 mobile:w-full mobile:ml-0'>
                {err === "User don't exist" ? (

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Avatar, Button, Paper, TextField, Skeleton, Alert, Snackbar, CircularProgress, Backdrop } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useSideData } from '@/customHooks/useSidebar';
-import { Socket } from 'socket.io-client';
 import axios from 'axios';
+import { useSocket } from '@/contexts/Socket';
+import { useDefault } from '@/contexts/Default';
 
 function formatTimeAgo(timestamp: number) {
     const now = Date.now();
@@ -32,8 +32,18 @@ function formatTimeAgo(timestamp: number) {
     }
 }
 
-export default function Sidebar({ email, socket, className }: { email: string | null | undefined, socket: Socket | null, className?:string }) {
-    const { sidebar, setSidebar, isLoading, error, setError, hasMoreData, setHasMoreData } = useSideData(email);
+export default function Sidebar({ className }: { className?: string }) {
+    const {
+        socket,
+        sidebar,
+        setSidebar,
+        isLoading,
+        error,
+        setError,
+        hasMoreData,
+        setHasMoreData
+    } = useSocket()
+    const { user } = useDefault()
     const scrollRef = useRef<HTMLDivElement | null>(null)
     const loading = useRef<boolean>(false)
     const router = useRouter()
@@ -50,7 +60,7 @@ export default function Sidebar({ email, socket, className }: { email: string | 
                 loading.current = true
                 try {
                     const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER}/messages/sidebar/`, {
-                        email: email,
+                        email: user?.email,
                         jump: sidebar?.length === 0 ? 10 : sidebar?.length
                     });
                     if (response?.data?.success) {
@@ -86,43 +96,6 @@ export default function Sidebar({ email, socket, className }: { email: string | 
             }
         };
     }, [handleScroll]);
-
-    useEffect(() => {
-        const room = email
-        socket?.emit('join', { room })
-        socket?.on('changeSide', (newSidebar) => {
-            console.log(newSidebar)
-            setSidebar(s => {
-                const updatedSidebar = s?.map((side: any) => {
-                    if (side.email === newSidebar.side.email) {
-                        return {
-                            ...newSidebar.side,
-                            lastYou: newSidebar?.sender === email,
-                            seen: newSidebar?.sender === email,
-                        };
-                    } else return side;
-                });
-                updatedSidebar?.sort((a, b) => b.date - a.date);
-                return updatedSidebar;
-            })
-        });
-
-        socket?.on('sideSeen', (data) => {
-            if (data.success) {
-                setSidebar(s => s.map((side) => {
-                    if (side.email === data.email) {
-                        return { ...side, seen: true }
-                    } else return side
-                }))
-            }
-        })
-
-        return () => {
-            socket?.off('changeSide')
-            socket?.off('sideSeen')
-            socket?.emit('leave', { room });
-        };
-    }, [])
 
 
     return (

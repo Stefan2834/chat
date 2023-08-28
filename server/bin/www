@@ -109,13 +109,15 @@ io.on('connection', (socket) => {
         avatar: data.avatarReceive || '',
         email: data.emailReceive || ''
       };
-      io.to(data?.emailReceive).emit('changeSide', { success: true, side: sideReceive, sender: data.emailSend })
-      io.to(data?.emailSend).emit('changeSide', { success: true, side: sideSend, sender: data.emailSend })
+      io.to(`side-${data?.emailReceive}`).emit('notification', { success: true, message: message, avatar: data.avatarSend });
+      io.to(`side-${data?.emailReceive}`).emit('changeSide', { success: true, side: sideReceive, sender: data.emailSend })
+      io.to(`side-${data?.emailSend}`).emit('changeSide', { success: true, side: sideSend, sender: data.emailSend })
     } catch (err) {
       console.log(err)
       io.to(data?.room).emit('message', { success: false, message: err.message })
-      io.to(data?.emailReceive).emit('changeSide', { success: false, message: err.message })
-      io.to(data?.emailSend).emit('changeSide', { success: false, message: err.message })
+      io.to(`side-${data?.emailReceive}`).emit('notification', { success: true, message: err.message });
+      io.to(`side-${data?.emailSend}`).emit('changeSide', { success: false, message: err.message })
+      io.to(`side-${data?.emailReceive}`).emit('changeSide', { success: false, message: err.message })
     }
   });
 
@@ -142,8 +144,8 @@ io.on('connection', (socket) => {
         await Messages.updateOne({ email: data.emailSend }, updateSend);
         await Messages.updateOne({ email: data.emailReceive }, updateReceive);
         io.to(data?.room).emit('seen', { success: true, })
-        io.to(data?.emailSend).emit('sideSeen', { success: true, email: data.emailReceive })
-        io.to(data?.emailReceive).emit('sideSeen', { success: true, email: data.emailSend })
+        io.to(`side-${data?.emailSend}`).emit('sideSeen', { success: true, email: data.emailReceive })
+        io.to(`side-${data?.emailReceive}`).emit('sideSeen', { success: true, email: data.emailSend })
       }
     } catch (err) {
       console.log(err)

@@ -1,9 +1,9 @@
 import { SessionProvider } from "next-auth/react"
 import React from 'react';
-import { useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Layout from "@/components/Layout";
 import { DefaultProvider } from "@/contexts/Default";
+import { SocketProvider } from "@/contexts/Socket";
 import Navbar from "@/components/Navbar";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { useRouter } from "next/router";
@@ -35,36 +35,38 @@ export default function App({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={theme}>
             <SessionProvider session={session}>
                 <DefaultProvider>
-                    <Navbar />
-                    <Layout>
-                        {shouldTransition ? (
-                            <TransitionGroup className="transition-group">
-                                {shouldTransition === 'right' ? (
-                                    <CSSTransition
-                                        key={router.route}
-                                        timeout={{ enter: 600, exit: 600 }}
-                                        classNames={`page-right`}
-                                    >
-                                        <div className={`page-right`}>
-                                            <Component {...pageProps} />
-                                        </div>
-                                    </CSSTransition>
-                                ) : (
-                                    <CSSTransition
-                                        key={router.route}
-                                        timeout={{ enter: 600, exit: 600 }}
-                                        classNames={`page-left`}
-                                    >
-                                        <div className={`page-left`}>
-                                            <Component {...pageProps} />
-                                        </div>
-                                    </CSSTransition>
-                                )}
-                            </TransitionGroup>
-                        ) : (
-                            <Component {...pageProps} />
-                        )}
-                    </Layout>
+                    <SocketProvider>
+                        <Navbar />
+                        <Layout>
+                            {shouldTransition ? (
+                                <TransitionGroup className="transition-group">
+                                    {shouldTransition === 'right' ? (
+                                        <CSSTransition
+                                            key={router.route}
+                                            timeout={{ enter: 600, exit: 600 }}
+                                            classNames={`page-right`}
+                                        >
+                                            <div className={`page-right`}>
+                                                <Component {...pageProps} />
+                                            </div>
+                                        </CSSTransition>
+                                    ) : (
+                                        <CSSTransition
+                                            key={router.route}
+                                            timeout={{ enter: 600, exit: 600 }}
+                                            classNames={`page-left`}
+                                        >
+                                            <div className={`page-left`}>
+                                                <Component {...pageProps} />
+                                            </div>
+                                        </CSSTransition>
+                                    )}
+                                </TransitionGroup>
+                            ) : (
+                                <Component {...pageProps} />
+                            )}
+                        </Layout>
+                    </SocketProvider>
                 </DefaultProvider>
             </SessionProvider>
         </ThemeProvider>
