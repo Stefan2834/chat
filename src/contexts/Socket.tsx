@@ -46,7 +46,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
 
     useEffect(() => {
-        pathRef.current = router.asPath; // Update the path ref when the path changes
+        pathRef.current = router.asPath;
     }, [router.asPath]);
 
     useEffect(() => {

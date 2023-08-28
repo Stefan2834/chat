@@ -6,7 +6,11 @@ import { TextField, IconButton, Avatar, Button, Snackbar, Alert, CircularProgres
 import Image from 'next/image';
 import Info from '@/components/messages/info';
 
-import emoji from '../../../svg/black/emoji-emotions.svg'
+import Picker from '@emoji-mart/react'
+import data from '@emoji-mart/data'
+
+
+import emojiPhoto from '../../../svg/black/emoji-emotions.svg'
 import files from '../../../svg/black/image-files.svg'
 import send from '../../../svg/black/send.svg'
 import infoPhoto from '../../../svg/black/info.svg'
@@ -70,6 +74,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
    const [hasMoreData, setHasMoreData] = useState(messagesData.length < 20 ? false : true)
    const [error, setError] = useState(err)
+   const [emoji, setEmoji] = useState<boolean>(false)
    const [seen, setSeen] = useState<boolean>(hasSeen)
    const [messages, setMessages] = useState(messagesData)
    const [info, setInfo] = useState<boolean>(false)
@@ -219,6 +224,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
       }, ...m])
       socket?.emit('message', { ...newMessage, room: [user?.email, params].sort().join('-') })
       if (submitRef.current) submitRef.current.value = '';
+      if(scrollRef.current) scrollRef.current.scrollTop = 0;
    };
 
 
@@ -332,13 +338,44 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }}
                               className='sticky bottom-0 w-full flex items-center bg-white justify-center px-8 py-3 mobile:fixed mobile:py-2 mobile:px-1'
                            >
-                              <IconButton aria-label="Example" sx={{
-                                 "@media (min-width: 1000px)": {
-                                    mr: 2,
-                                 },
-                              }}>
-                                 <Image src={emoji} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
-                              </IconButton>
+                              {emoji && window.innerWidth > 1000 && (
+                                 <div className='absolute z-20 bottom-24 right-0 left-2 w-0'>
+                                    <Picker data={data}
+                                       theme={'light'}
+                                       autoFocus={true}
+                                       onClickOutside={() => setEmoji(false)}
+                                       onEmojiSelect={(emoji: any) => {
+                                          if (submitRef.current) {
+                                             const input = submitRef.current;
+                                             const inputValue = input.value;
+                                             const selectionStart = input.selectionStart || 0;
+                                             const selectionEnd = input.selectionEnd || 0;
+
+                                             const newValue =
+                                                inputValue.slice(0, selectionStart) +
+                                                emoji.native +
+                                                inputValue.slice(selectionEnd);
+
+                                             input.value = newValue;
+                                             input.selectionStart = input.selectionEnd = selectionStart + emoji.native.length;
+                                             input.focus()
+                                          }
+                                       }}
+                                    />
+                                 </div>
+                              )}
+                              {window.innerWidth >= 1000 && (
+                                 <>
+                                    <IconButton aria-label="Example" sx={{
+                                       "@media (min-width: 1000px)": {
+                                          mr: 2,
+                                       },
+                                    }} onClick={(e:any) => {e.stopPropagation(); setEmoji(!emoji)}}
+                                    >
+                                       <Image src={emojiPhoto} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
+                                    </IconButton>
+                                 </>
+                              )}
                               <IconButton aria-label="Example" sx={{
                                  "@media (min-width: 1000px)": {
                                     mr: 2,

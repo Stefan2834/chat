@@ -68,11 +68,11 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
 
 
     useEffect(() => {
+        console.log(session)
         if (status === "loading") {
             console.log('Loading')
         } else if (status === "authenticated") {
             setLoading(false);
-            console.log(status)
             setUser({
                 email: session?.user?.email || null,
                 name: session?.user?.name || null,
