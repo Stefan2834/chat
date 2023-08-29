@@ -54,7 +54,6 @@ type User = {
 }
 
 
-
 export function DefaultProvider({ children }: DefaultProviderProps) {
     const initialState: State = { number: 0 }
     const { data: session, status } = useSession()
