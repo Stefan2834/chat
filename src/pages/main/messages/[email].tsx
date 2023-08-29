@@ -224,7 +224,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
       }, ...m])
       socket?.emit('message', { ...newMessage, room: [user?.email, params].sort().join('-') })
       if (submitRef.current) submitRef.current.value = '';
-      if(scrollRef.current) scrollRef.current.scrollTop = 0;
+      if (scrollRef.current) scrollRef.current.scrollTop = 0;
    };
 
 
@@ -239,7 +239,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
             {window.innerWidth >= 1000} {
                <Sidebar className='block mobile:hidden' />
             }
-            <div className=' w-[calc(100%-384px)] h-full relative flex flex-col ml-96 mobile:w-full mobile:ml-0'>
+            <div className='w-[calc(100%-384px)] h-full relative flex flex-col ml-96 mobile:w-full mobile:ml-0'>
                {err === "User don't exist" ? (
                   <div className='w-full h-screen flex flex-row items-center justify-center'>
                      <div className=''>User don't exist</div>
@@ -370,7 +370,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                        "@media (min-width: 1000px)": {
                                           mr: 2,
                                        },
-                                    }} onClick={(e:any) => {e.stopPropagation(); setEmoji(!emoji)}}
+                                    }} onClick={(e: any) => { e.stopPropagation(); setEmoji(!emoji) }}
                                     >
                                        <Image src={emojiPhoto} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
                                     </IconButton>
@@ -392,7 +392,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                  inputRef={submitRef}
                               />
                               <IconButton aria-label="Example" type='submit'
-                                 sx={{ "@media (min-width: 1000px)": { mr: 2 }, mr: -1 }}
+                                 sx={{ "@media (min-width: 1000px)": { mr: 2, ml: 2 }, mr: -1 }}
                               >
                                  <Image src={send} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
                               </IconButton>
