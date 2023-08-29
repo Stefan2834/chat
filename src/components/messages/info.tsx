@@ -26,6 +26,7 @@ export default function Info({ activeBg, setBg, setInfo, setError, email, emailS
     'https://chatapp2834.s3.eu-west-3.amazonaws.com/p6.jpg',
     'https://chatapp2834.s3.eu-west-3.amazonaws.com/p7.jpg',
     'https://chatapp2834.s3.eu-west-3.amazonaws.com/p8.jpg',
+    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p9.jpg',
   ]
 
   const modifyBg = (value: string) => {
