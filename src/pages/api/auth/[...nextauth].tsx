@@ -18,10 +18,10 @@ type AuthOptions = NextAuthOptions & {
 
 const authOptions: AuthOptions = {
   providers: [
-    // DiscordProvider({
-    //   clientId: process.env.DISCORD_ID,
-    //   clientSecret: process.env.DISCORD_SECRET,
-    // } as ProviderConfig), 
+    DiscordProvider({
+      clientId: process.env.DISCORD_ID,
+      clientSecret: process.env.DISCORD_SECRET,
+    } as ProviderConfig), 
     GoogleProvider({
       clientId: process.env.GOOGLE_ID, // Replace with your Google Client ID
       clientSecret: process.env.GOOGLE_SECRET, // Replace with your Google Client Secret
