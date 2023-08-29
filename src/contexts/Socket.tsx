@@ -92,16 +92,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         socket?.on('notification', data => {
             if (data.success) {
                 const mess = data.message
-                // if (Notification.permission === 'granted') {
-                //     if (pathRef?.current !== `/main/messages/${mess.email}`) {
-                //         new Notification(`Message from: ${mess.email}`, {
-                //             body: mess.message,
-                //             icon: data.avatar
-                //         }).addEventListener('click', () => {
-                //             window.open(`http://localhost:3000/main/messages/${mess.email}`);
-                //         });
-                //     }
-                // }
+                
             }
         })
 
