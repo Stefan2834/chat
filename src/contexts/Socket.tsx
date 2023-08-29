@@ -57,9 +57,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         const room = `side-${user?.email}`
         socket?.emit('join', { room })
 
-        if (Notification.permission !== 'denied' && Notification.permission !== "granted") {
-            Notification.requestPermission()
-        };
+        // if (Notification.permission !== 'denied' && Notification.permission !== "granted") {
+        //     Notification.requestPermission()
+        // };
 
         setLoading(false)
 
