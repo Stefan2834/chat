@@ -341,7 +341,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                               className='sticky bottom-0 w-full flex items-center bg-white justify-center px-8 py-3 mobile:fixed mobile:py-2 mobile:px-1'
                            >
                               {emoji && window.innerWidth > 1000 && (
-                                 <div className='absolute z-20 bottom-24 right-0 left-2 w-0'>
+                                 <div className='absolute z-20 bottom-24 right-0 left-2 w-96'>
                                     <Picker data={data}
                                        theme={'light'}
                                        autoFocus={true}
