@@ -203,6 +203,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
       };
    }, [params]);
 
+   
    const handleSubmit = () => {
       const mess = submitRef?.current?.value;
       const date = Date.now()
