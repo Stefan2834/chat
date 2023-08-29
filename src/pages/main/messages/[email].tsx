@@ -196,6 +196,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
          }
       })
 
+      
       return () => {
          socket?.off('message');
          socket?.off('seen')
@@ -203,7 +204,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
       };
    }, [params]);
 
-   
+
    const handleSubmit = () => {
       const mess = submitRef?.current?.value;
       const date = Date.now()
