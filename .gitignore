@@ -11,8 +11,8 @@
 # next.js
 /.next/
 /out/
-.env
-/server/.env
+.env*
+/server/.env*
 
 # production
 /build
