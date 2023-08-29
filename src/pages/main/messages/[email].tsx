@@ -178,6 +178,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                   return updatedMessages;
                });
             } else {
+               setSeen(false)
                setMessages((prevMessages) => [{
                   email: message?.email,
                   date: message?.date,

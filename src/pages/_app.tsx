@@ -12,14 +12,13 @@ import '../app/globals.css'
 interface AppProps {
     Component: React.ComponentType<any>;
     pageProps: {
-        session: any; // Adjust the type for the session object based on your application's session structure
-        // ...other pageProps if any
+        session: any;
     };
 }
 
 const theme = createTheme({
     typography: {
-        fontFamily: 'Poppins, sans-serif', // Use the font family you imported
+        fontFamily: 'Poppins, sans-serif',
     },
 });
 
