@@ -196,7 +196,6 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
          }
       })
 
-      
       return () => {
          socket?.off('message');
          socket?.off('seen')

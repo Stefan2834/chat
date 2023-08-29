@@ -79,10 +79,10 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
                 avatar: session?.user?.image || null,
             })
         } else {
+            setLoading(false)
             setUser(null)
             console.log(status)
             router.push("/");
-            setLoading(false)
         }
     }, [status]);
 
