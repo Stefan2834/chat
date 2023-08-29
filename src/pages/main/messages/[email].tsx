@@ -287,7 +287,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                     return (
                                        <>
                                           <div className='w-auto max-w-[60%] p-0.5 self-end mr-2 flex justify-center items-center' key={index}>
-                                             <div className={`flex flex-col text-right bg-white p-3 overflow-hidden rounded-3xl items-center justify-start`}
+                                             <div className={`flex flex-col text-right bg-white p-3 overflow-hidden rounded-3xl items-start justify-start w-full`}
                                                 style={{ borderTopRightRadius: borderTop, borderBottomRightRadius: borderBottom }}
                                              >
                                                 <div className='mr-2'>{mess.message}</div>
@@ -312,7 +312,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                                    sx={{ cursor: 'pointer', ml: -5 }}
                                                 />
                                              )}
-                                             <div className='flex flex-col bg-white p-3 items-center justify-start rounded-3xl ml-2'
+                                             <div className='flex flex-col bg-white p-3 items-start overflow-hidden justify-start rounded-3xl ml-2 w-full'
                                                 style={{ borderTopLeftRadius: borderTop, borderBottomLeftRadius: borderBottom }}
                                              >
                                                 <div className=''>{mess.message}</div>
