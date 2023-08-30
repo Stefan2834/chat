@@ -138,7 +138,7 @@ export default function Navbar() {
         </Paper>
       ) : (
         <>
-          <Box sx={{ zIndex: '20', height: '100vh' }}
+          <Box sx={{ zIndex: '20', height: '100%' }}
             className={router.route === '/main/messages/[email]' ? `${styles.custom1}` : `${styles.custom2}`}
           >
             <Paper sx={{ position: 'fixed', left: 0, top: 0, zIndex: 20, width: '100vw' }} elevation={3}
@@ -154,7 +154,7 @@ export default function Navbar() {
                 </Toolbar>
               </AppBar>
             </Paper>
-            <div style={{ position: 'fixed', left: 0, bottom: 0, zIndex: 20, width: '100vw', height: '56px' }}>
+            <div style={{ position: 'fixed', left: 0, bottom: 0, zIndex: 20, width: '100vw', height: '54px' }}>
               <BottomNavigation
                 showLabels
               >

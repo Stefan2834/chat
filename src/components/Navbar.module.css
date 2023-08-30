@@ -25,10 +25,12 @@
 }
 .custom1 {
     translate:-100vw;
-    transition: 600ms ease-in-out;
-    position:fixed;
+    position: absolute;
+    transition: translate 600ms ease-in-out;
+    height:120vh;
 }
 .custom2 {
+    height:120vh;
     position: fixed;
-    transition: 600ms ease-in-out;
+    transition: translate 600ms ease-in-out;
 }

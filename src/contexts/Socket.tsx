@@ -57,9 +57,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         const room = `side-${user?.email}`
         socket?.emit('join', { room })
 
-        // if (Notification.permission !== 'denied' && Notification.permission !== "granted") {
-        //     Notification.requestPermission()
-        // };
+        if (Notification.permission !== 'denied' && Notification.permission !== "granted") {
+            Notification.requestPermission()
+        };
 
         setLoading(false)
 
@@ -98,7 +98,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                             body: mess.message,
                             icon: data.avatar
                         }).addEventListener('click', () => {
-                            window.open(`http://localhost:3000/main/messages/${mess.email}`);
+                            window.open(`https://chat-drab-nine.vercel.app/main/messages/${mess.email}`);
                         });
                     }
                 }

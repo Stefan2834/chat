@@ -52,7 +52,7 @@ export default function App({ Component, pageProps }: AppProps) {
                                     ) : (
                                         <CSSTransition
                                             key={router.route}
-                                            timeout={{ enter: 600, exit: 600 }}
+                                            timeout={{ enter: 600, exit: 6000 }}
                                             classNames={`page-left`}
                                         >
                                             <div className={`page-left`}>

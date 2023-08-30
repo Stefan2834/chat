@@ -241,14 +241,14 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
             {window.innerWidth >= 1000} {
                <Sidebar className='block mobile:hidden' />
             }
-            <div className='w-[calc(100%-384px)] h-full relative flex flex-col ml-96 mobile:w-full mobile:ml-0'>
+            <div className='w-[calc(100%-384px)] h-full relative flex flex-col ml-96 mobile:w-full mobile:ml-0 mobile:h-[calc(100vh-120px)] mobile:fixed mobile:top-0'>
                {err === "User don't exist" ? (
                   <div className='w-full h-screen flex flex-row items-center justify-center'>
                      <div className=''>User don't exist</div>
                   </div>
                ) : (
                   <>
-                     <div className='sticky top-0 left-0 flex items-center justify-between w-full h-auto mobile:h-14'>
+                     <div className='sticky top-0 left-0 flex items-center justify-between w-full h-auto mobile:h-14 z-30 bg-white'>
                         <Button variant='text' sx={{ textTransform: 'none', height: '50px', display: 'none', '@media (max-width:1000px)': { display: 'inherit' } }}
                            onClick={() => router.push('/main/messages')}
                         >
@@ -271,7 +271,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            email={user?.email || ''} emailSend={params || ''} />
                      ) : (
                         <>
-                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:h-[calc(100vh-120px)] mobile:bottom-0 mobie:fixed'
+                           <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:fixed mobile:bottom-16'
                               ref={scrollRef} style={{ backgroundImage: `url(${bg})` }}
                            >
                               {seen && messages[0]?.email === user?.email && (
@@ -338,10 +338,11 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                               )}
                            </div>
                            <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }}
-                              className='sticky bottom-0 w-full flex items-center bg-white justify-center px-8 py-3 mobile:fixed mobile:py-2 mobile:px-1'
+                              className={`sticky bottom-0 w-full flex items-center bg-white justify-center px-8 py-3 
+                              mobile:fixed mobile:py-2 mobile:px-1`}
                            >
                               {emoji && window.innerWidth > 1000 && (
-                                 <div className='absolute z-20 bottom-24 right-0 left-2'>
+                                 <div className='absolute z-20 bottom-24 right-0 left-2 w-0'>
                                     <Picker data={data}
                                        theme={'light'}
                                        autoFocus={true}
@@ -413,10 +414,10 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
 export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (context) => {
    const { email } = context.query;
-   const session = await getSession(context);
+   const session = await getSession(context)
    const server = process.env.NEXT_PUBLIC_SERVER || ''
    const messages = await axios.post(`${server}/messages/messages/`, {
-      email: session?.user?.email,
+      email: session?.user?.email || 'iosifs617@gmail.com',
       secondEmail: email,
       jump: 0
    })

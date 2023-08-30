@@ -4,12 +4,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 require('dotenv').config()
+const cors = require('cors')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var messagesRouter = require('./routes/messages')
 
+
 var app = express();
+
+
 app.use(cookieParser());
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', process.env.WEBSITE);

@@ -13,7 +13,7 @@ app.set('port', port);
 
 var server = http.createServer(app);
 const io = socketIO(server, {
-  cors: { origin: '*' }
+  cors: { origin: process.env.WEBSITE }
 });
 
 io.on('connection', (socket) => {
@@ -165,7 +165,7 @@ const connect = async () => {
 var port = normalizePort(process.env.PORT || '9000');
 app.set('port', port);
 
-server.listen(port, async () => {
+server.listen(port, '192.168.100.34', async () => {
   await connect()
   console.log(`Server is on port: ${port}`)
 });
