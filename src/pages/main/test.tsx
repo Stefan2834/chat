@@ -1,29 +1,16 @@
 import { useEffect, useState } from 'react';
+import Picker from '@emoji-mart/react'
+import data from '@emoji-mart/data'
+
 
 const ProgressBar = () => {
-  const [loadingProgress, setLoadingProgress] = useState(0);
+  return (
+    <Picker data={data}
+      theme={'light'}
+      autoFocus={true}
+    />
+  )
 
-  useEffect(() => {
-    const startLoadTime = window.performance.timing.navigationStart;
-    const pageLoadTime = window.performance.timing.loadEventEnd - startLoadTime;
-
-    const intervalId = setInterval(() => {
-      const currentTime = Date.now() - startLoadTime;
-      const currentProgress = (100 * currentTime) / pageLoadTime;
-      setLoadingProgress(Math.min(currentProgress, 100));
-
-      if (currentTime >= pageLoadTime) {
-        clearInterval(intervalId);
-        setLoadingProgress(100);
-      }
-    }, 1000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
-
-  return <div className="progress-bar" style={{ width: `${loadingProgress}%`, height:'30px', backgroundColor:'red' }} />;
 };
 
 export default ProgressBar;
