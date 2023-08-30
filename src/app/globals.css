@@ -9,6 +9,7 @@ body {
 }
 html {
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 * {
     box-sizing: border-box;
@@ -96,6 +97,7 @@ html {
     }
     body {
       height: 100%;
+      width: 100vw;
       position: fixed;
     }
 }

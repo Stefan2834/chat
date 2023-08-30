@@ -108,7 +108,8 @@ export default function Profile({ profileData, params }: UserPageProps) {
     return (
         <>
             {profile ? (
-                <div className='w-full h-auto mt-10 mb-28 flex items-center justify-center flex-col relative overflow-x-hidden'>
+                // <div className={`w-full fixed h-full overflow-y-scroll flex flex-col items-center justify-start pt-10 mobile:py-20`}>
+                <div className={`w-full fixed h-full overflow-y-scroll flex flex-col items-center justify-start mt-6 mobile:pb-32`}>
                     {selectedPhoto && (
                         <Posts selectedPhoto={selectedPhoto}
                             onClose={() => setSelectedPhoto(null)}
@@ -116,7 +117,7 @@ export default function Profile({ profileData, params }: UserPageProps) {
                             modifyLike={() => modifyLike()}
                         />
                     )}
-                    <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', width: "auto", maxWidth: "100%" }} >
+                    <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', width: "auto", maxWidth: "100%", marginTop:'60px' }} >
                         <div className='flex items-center justify-center'>
                             <Avatar alt='avatar' src={profile?.avatar} sx={{ width: 140, height: 140 }} />
                             <div className='flex flex-col h-28 ml-8'>
