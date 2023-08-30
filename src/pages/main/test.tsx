@@ -1,6 +1,4 @@
-import dynamic from 'next/dynamic'
-
-const Picker = dynamic(() => import('@emoji-mart/react'),{ ssr: false })
+import EmojiPicker from "@emoji-mart/react";
 
 
 
@@ -8,7 +6,7 @@ const EmojiPage = () => {
   return (
     <div>
       <h1>Emoji Picker</h1>
-      <Picker  />
+      <EmojiPicker  />
     </div>
   );
 };
