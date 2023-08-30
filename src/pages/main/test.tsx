@@ -1,16 +1,9 @@
-import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
-
-const ProgressBar = () => {
+export default function App() {
+  console.log(data)
   return (
-    <div className='w-full bg-red-400'>
-
-      <Picker data={data}
-      />
-    </div>
+    <Picker data={data} onEmojiSelect={console.log} />
   )
-
-};
-
-export default ProgressBar;
+}
