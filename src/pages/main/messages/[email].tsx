@@ -217,6 +217,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
          message: mess || '',
       }
       setSeen(false)
+      setEmoji(false)
       setMessages((m) => [{
          email: user?.email,
          date: date,
@@ -343,6 +344,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                               {emoji && window.innerWidth > 1000 && (
                                  <div className='absolute z-20 bottom-24 right-0 left-2 w-0'>
                                     <EmojiPicker
+                                    lazyLoadEmojis={true}
                                        onEmojiClick={(emoji: any) => {
                                           if (submitRef.current) {
                                              const input = submitRef.current;
