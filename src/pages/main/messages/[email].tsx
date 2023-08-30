@@ -6,10 +6,7 @@ import { TextField, IconButton, Avatar, Button, Snackbar, Alert, CircularProgres
 import Image from 'next/image';
 import Info from '@/components/messages/info';
 
-import dynamic from 'next/dynamic'
-
-const Picker = dynamic(() => import('@emoji-mart/react'),{ ssr: false })
-import data from '@emoji-mart/data'
+import EmojiPicker from 'emoji-picker-react';
 
 
 import emojiPhoto from '../../../svg/black/emoji-emotions.svg'
@@ -345,11 +342,8 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                            >
                               {emoji && window.innerWidth > 1000 && (
                                  <div className='absolute z-20 bottom-24 right-0 left-2 w-0'>
-                                    <Picker data={data}
-                                       theme={'light'}
-                                       autoFocus={true}
-                                       onClickOutside={() => setEmoji(false)}
-                                       onEmojiSelect={(emoji: any) => {
+                                    <EmojiPicker
+                                       onEmojiClick={(emoji: any) => {
                                           if (submitRef.current) {
                                              const input = submitRef.current;
                                              const inputValue = input.value;
@@ -358,11 +352,11 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
                                              const newValue =
                                                 inputValue.slice(0, selectionStart) +
-                                                emoji.native +
+                                                emoji.emoji +
                                                 inputValue.slice(selectionEnd);
 
                                              input.value = newValue;
-                                             input.selectionStart = input.selectionEnd = selectionStart + emoji.native.length;
+                                             input.selectionStart = input.selectionEnd = selectionStart + emoji.emoji.length;
                                              input.focus()
                                           }
                                        }}
