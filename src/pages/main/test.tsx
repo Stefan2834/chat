@@ -1,9 +1,13 @@
-import data from '@emoji-mart/data'
-import Picker from '@emoji-mart/react'
+import { FC } from 'react';
+import Picker from '@emoji-mart/react';
 
-export default function App() {
-  console.log(data)
+const EmojiPage: FC = () => {
   return (
-    <Picker data={data} onEmojiSelect={console.log} />
-  )
-}
+    <div>
+      <h1>Emoji Picker</h1>
+      <Picker  />
+    </div>
+  );
+};
+
+export default EmojiPage;
