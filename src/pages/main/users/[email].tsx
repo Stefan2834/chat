@@ -113,7 +113,7 @@ export default function Profile({ profileData, params }: UserPageProps) {
                         <Posts selectedPhoto={selectedPhoto}
                             onClose={() => setSelectedPhoto(null)}
                             getComment={() => getComment()}
-                            modifyLike={() => modifyLike()}g
+                            modifyLike={() => modifyLike()}
                         />
                     )}
                     <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', width: "auto", maxWidth: "100%", marginTop:'60px' }} >
