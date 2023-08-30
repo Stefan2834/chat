@@ -108,13 +108,12 @@ export default function Profile({ profileData, params }: UserPageProps) {
     return (
         <>
             {profile ? (
-                // <div className={`w-full fixed h-full overflow-y-scroll flex flex-col items-center justify-start pt-10 mobile:py-20`}>
-                <div className={`w-full fixed h-full overflow-y-scroll flex flex-col items-center justify-start mt-6 mobile:pb-32`}>
+                <div className={`w-full relative h-full overflow-y-scroll flex flex-col items-center justify-start mt-6 pb-32 mobile:fixed`}>
                     {selectedPhoto && (
                         <Posts selectedPhoto={selectedPhoto}
                             onClose={() => setSelectedPhoto(null)}
                             getComment={() => getComment()}
-                            modifyLike={() => modifyLike()}
+                            modifyLike={() => modifyLike()}g
                         />
                     )}
                     <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', width: "auto", maxWidth: "100%", marginTop:'60px' }} >
