@@ -1,7 +1,10 @@
-import { FC } from 'react';
-import Picker from '@emoji-mart/react';
+import dynamic from 'next/dynamic'
 
-const EmojiPage: FC = () => {
+const Picker = dynamic(() => import('@emoji-mart/react'),{ ssr: false })
+
+
+
+const EmojiPage = () => {
   return (
     <div>
       <h1>Emoji Picker</h1>
