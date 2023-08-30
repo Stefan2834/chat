@@ -83,7 +83,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
                 // name: 'Stefan',
                 // avatar: 'https://lh3.googleusercontent.com/a/AAcHTtfIxo4XhUkrkxv2RnUwqSp9Yg2_GnrMTB0aI73cAop6u-M=s96-c'
             // })
-            setUser(null)
+            // setUser(null)
             router.push("/");
             setLoading(false)
         }
