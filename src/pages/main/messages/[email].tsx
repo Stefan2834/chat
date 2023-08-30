@@ -6,7 +6,9 @@ import { TextField, IconButton, Avatar, Button, Snackbar, Alert, CircularProgres
 import Image from 'next/image';
 import Info from '@/components/messages/info';
 
-import Picker from '@emoji-mart/react'
+import dynamic from 'next/dynamic'
+
+const Picker = dynamic(() => import('@emoji-mart/react'),{ ssr: false })
 import data from '@emoji-mart/data'
 
 
