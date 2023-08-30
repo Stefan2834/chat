@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from 'next-auth/providers/github'
 import { NextAuthOptions } from "next-auth";
 
 // Define the type for the provider's configuration
