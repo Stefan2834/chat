@@ -22,6 +22,7 @@ const usersSchema = new mongoose.Schema({
   }]
 });
 
+
 const messagesSchema = new mongoose.Schema({
   email: String,
   conversations: [{
