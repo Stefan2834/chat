@@ -87,6 +87,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
             router.push("/");
             setLoading(false)
         }
+        
     }, [status]);
 
     useEffect(() => {

@@ -3,12 +3,16 @@ var router = express.Router();
 const { Messages, Users } = require("./Schema");
 
 
+
+
+
+
 router.post('/sidebar', async (req, res) => {
     const { email, jump } = req.body
     try {
+
         const elementNumber = 20;
         const messageDb = await Messages.findOne({ email });
-
         if (!messageDb) {
             return res.json({ success: false, message: 'User not found' });
         }
