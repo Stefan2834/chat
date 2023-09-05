@@ -1,4 +1,3 @@
-import { SessionProvider } from "next-auth/react"
 import React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Layout from "@/components/Layout";
@@ -32,42 +31,40 @@ export default function App({ Component, pageProps }: AppProps) {
 
     return (
         <ThemeProvider theme={theme}>
-            <SessionProvider session={session}>
-                <DefaultProvider>
-                    <SocketProvider>
-                        <Navbar />
-                        <Layout>
-                            {shouldTransition ? (
-                                <TransitionGroup className="transition-group">
-                                    {shouldTransition === 'right' ? (
-                                        <CSSTransition
-                                            key={router.route}
-                                            timeout={{ enter: 600, exit: 600 }}
-                                            classNames={`page-right`}
-                                        >
-                                            <div className={`page-right`}>
-                                                <Component {...pageProps} />
-                                            </div>
-                                        </CSSTransition>
-                                    ) : (
-                                        <CSSTransition
-                                            key={router.route}
-                                            timeout={{ enter: 600, exit: 6000 }}
-                                            classNames={`page-left`}
-                                        >
-                                            <div className={`page-left`}>
-                                                <Component {...pageProps} />
-                                            </div>
-                                        </CSSTransition>
-                                    )}
-                                </TransitionGroup>
-                            ) : (
-                                <Component {...pageProps} />
-                            )}
-                        </Layout>
-                    </SocketProvider>
-                </DefaultProvider>
-            </SessionProvider>
+            <DefaultProvider>
+                <SocketProvider>
+                    <Navbar />
+                    <Layout>
+                        {shouldTransition ? (
+                            <TransitionGroup className="transition-group">
+                                {shouldTransition === 'right' ? (
+                                    <CSSTransition
+                                        key={router.route}
+                                        timeout={{ enter: 600, exit: 600 }}
+                                        classNames={`page-right`}
+                                    >
+                                        <div className={`page-right`}>
+                                            <Component {...pageProps} />
+                                        </div>
+                                    </CSSTransition>
+                                ) : (
+                                    <CSSTransition
+                                        key={router.route}
+                                        timeout={{ enter: 600, exit: 6000 }}
+                                        classNames={`page-left`}
+                                    >
+                                        <div className={`page-left`}>
+                                            <Component {...pageProps} />
+                                        </div>
+                                    </CSSTransition>
+                                )}
+                            </TransitionGroup>
+                        ) : (
+                            <Component {...pageProps} />
+                        )}
+                    </Layout>
+                </SocketProvider>
+            </DefaultProvider>
         </ThemeProvider>
     )
 }
