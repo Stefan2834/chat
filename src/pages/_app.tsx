@@ -30,12 +30,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
 
     return (
-        // <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
             <DefaultProvider>
                 <SocketProvider>
                     <Navbar />
                     <Layout>
-                        {shouldTransition ? (
+                        {/* {shouldTransition ? (
                             <TransitionGroup className="transition-group">
                                 {shouldTransition === 'right' ? (
                                     <CSSTransition
@@ -44,7 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
                                         classNames={`page-right`}
                                     >
                                         <div className={`page-right`}>
-                                            {/* <Component {...pageProps} /> */}
+                                            <Component {...pageProps} />
                                         </div>
                                     </CSSTransition>
                                 ) : (
@@ -54,18 +54,17 @@ export default function App({ Component, pageProps }: AppProps) {
                                         classNames={`page-left`}
                                     >
                                         <div className={`page-left`}>
-                                            {/* <Component {...pageProps} /> */}
+                                            <Component {...pageProps} />
                                         </div>
                                     </CSSTransition>
                                 )}
                             </TransitionGroup>
                         ) : (
-                            <></>
-                            // <Component {...pageProps} />
-                        )}
+                        )} */}
+                        <Component {...pageProps} />
                     </Layout>
                 </SocketProvider>
             </DefaultProvider>
-        // </ThemeProvider>
+        </ThemeProvider>
     )
 }
