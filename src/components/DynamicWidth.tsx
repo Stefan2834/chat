@@ -15,29 +15,29 @@ const DynamicWidthComponent: React.FC<DynamicWidthComponentProps> = ({ navbar, c
         padding = '110px';
     }
 
-    // useEffect(() => {
-    //     const handleResize = () => {
-    //         if (window.innerWidth < 1000) {
-    //             setPhone(true);
-    //         } else {
-    //             setPhone(false);
-    //         }
-    //     };
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 1000) {
+                setPhone(true);
+            } else {
+                setPhone(false);
+            }
+        };
         
-    //     // Check if running in the browser before adding the event listener
-    //     if (typeof window !== 'undefined') {
-    //         if(window.innerWidth < 1000) {
-    //             setPhone(true)
-    //         } else {
-    //             setPhone(false)
-    //         }
-    //         window.addEventListener('resize', handleResize);
+        // Check if running in the browser before adding the event listener
+        if (typeof window !== 'undefined') {
+            if(window.innerWidth < 1000) {
+                setPhone(true)
+            } else {
+                setPhone(false)
+            }
+            window.addEventListener('resize', handleResize);
 
-    //         return () => {
-    //             window.removeEventListener('resize', handleResize);
-    //         };
-    //     }
-    // }, []);
+            return () => {
+                window.removeEventListener('resize', handleResize);
+            };
+        }
+    }, []);
 
     return (
         <>
