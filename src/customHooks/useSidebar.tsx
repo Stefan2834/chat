@@ -58,6 +58,7 @@ export const useSideData = (email: string | null | undefined): UseSideDataResult
                     setHasMoreData(response.data.data.getSidebar.hasMoreData)
                 } else {
                     setSidebar([])
+                    console.log(response)
                     console.error(response.data.data.getSidebar.message)
                     setError(response.data.data.getSidebar.message)
                 }
@@ -72,7 +73,7 @@ export const useSideData = (email: string | null | undefined): UseSideDataResult
         };
 
         fetchSideData();
-    }, []);
+    }, [email]);
 
     return { sidebar, setSidebar, isLoading, error, setError, hasMoreData, setHasMoreData };
 };

@@ -113,7 +113,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             }
             socket.disconnect();
         };
-    }, [])
+    }, [user])
 
 
 
