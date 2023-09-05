@@ -60,10 +60,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             socket?.emit('join', { room })
         }
 
-        // if (Notification.permission !== 'denied' && Notification.permission !== "granted") {
-        //     Notification.requestPermission()
-        // };
-
 
         socket?.on('changeSide', (newSidebar) => {
             setSidebar(s => {
