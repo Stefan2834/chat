@@ -23,7 +23,7 @@ interface UseSideDataResult {
 
 export const useSideData = (email: string | null | undefined): UseSideDataResult => {
     const [sidebar, setSidebar] = useState<ConversationType[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [hasMoreData, setHasMoreData] = useState(false)
     const [error, setError] = useState<string | null>(null)
 

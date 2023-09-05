@@ -56,7 +56,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
     const router = useRouter()
     const [state, dispatch] = useReducer<ReducerFunction>(Reducer, initialState);
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
     const [navOpen, setNavOpen] = useState<boolean>(true)
     const [darkTheme, setDarkTheme] = useState<boolean>(true)
     const server: String = process.env.NEXT_PUBLIC_SERVER || ''
@@ -123,8 +123,10 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
     return (
         <DefaultContext.Provider value={value}>
             <DynamicWidthComponent navbar={navOpen} >
-                <div>TESTAREEEEEEEEE</div>
-                {/* {!loading && children} */}
+                {!loading ? children
+                    : (
+                        <div>Loading</div>
+                    )}
             </DynamicWidthComponent>
         </DefaultContext.Provider>
     )
