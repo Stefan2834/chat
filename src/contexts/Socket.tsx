@@ -40,7 +40,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     const { user, server } = useDefault()
     const router = useRouter()
     const pathRef = useRef<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true)
+    const [loading, setLoading] = useState<boolean>(false)
     const [socket, setSocket] = useState<Socket | null>(null)
     const { sidebar, setSidebar, isLoading, error, setError, hasMoreData, setHasMoreData } = useSideData(user?.email || '');
 
