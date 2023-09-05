@@ -50,72 +50,72 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         pathRef.current = router.asPath;
     }, [router.asPath]);
 
-    useEffect(() => {
-        const socket = io(process.env.NEXT_PUBLIC_SERVER || '', {
-            transports: ['websocket']
-        });
-        setSocket(socket)
-        const room = `side-${user?.email}`
-        if (user?.email) {
-            socket?.emit('join', { room })
-        }
+    // useEffect(() => {
+    //     const socket = io(process.env.NEXT_PUBLIC_SERVER || '', {
+    //         transports: ['websocket']
+    //     });
+    //     setSocket(socket)
+    //     const room = `side-${user?.email}`
+    //     if (user?.email) {
+    //         socket?.emit('join', { room })
+    //     }
 
-        if (Notification.permission !== 'denied' && Notification.permission !== "granted") {
-            Notification.requestPermission()
-        };
+    //     if (Notification.permission !== 'denied' && Notification.permission !== "granted") {
+    //         Notification.requestPermission()
+    //     };
 
 
-        socket?.on('changeSide', (newSidebar) => {
-            setSidebar(s => {
-                const updatedSidebar = s?.map((side: any) => {
-                    if (side.email === newSidebar.side.email) {
-                        return {
-                            ...newSidebar.side,
-                            lastYou: newSidebar?.sender === user?.email,
-                            seen: newSidebar?.sender === user?.email,
-                        };
-                    } else return side;
-                });
-                updatedSidebar?.sort((a, b) => b.date - a.date);
-                return updatedSidebar;
-            })
-        });
+    //     socket?.on('changeSide', (newSidebar) => {
+    //         setSidebar(s => {
+    //             const updatedSidebar = s?.map((side: any) => {
+    //                 if (side.email === newSidebar.side.email) {
+    //                     return {
+    //                         ...newSidebar.side,
+    //                         lastYou: newSidebar?.sender === user?.email,
+    //                         seen: newSidebar?.sender === user?.email,
+    //                     };
+    //                 } else return side;
+    //             });
+    //             updatedSidebar?.sort((a, b) => b.date - a.date);
+    //             return updatedSidebar;
+    //         })
+    //     });
 
-        socket?.on('sideSeen', (data) => {
-            if (data.success) {
-                setSidebar(s => s.map((side) => {
-                    if (side.email === data.email) {
-                        return { ...side, seen: true }
-                    } else return side
-                }))
-            }
-        })
+    //     socket?.on('sideSeen', (data) => {
+    //         if (data.success) {
+    //             setSidebar(s => s.map((side) => {
+    //                 if (side.email === data.email) {
+    //                     return { ...side, seen: true }
+    //                 } else return side
+    //             }))
+    //         }
+    //     })
 
-        socket?.on('notification', data => {
-            if (data.success) {
-                const mess = data.message
-                if (Notification.permission === 'granted') {
-                    if (pathRef?.current !== `/main/messages/${mess.email}`) {
-                        new Notification(`Message from: ${mess.email}`, {
-                            body: mess.message,
-                            icon: data.avatar
-                        }).addEventListener('click', () => {
-                            window.open(`https://chat-drab-nine.vercel.app/main/messages/${mess.email}`);
-                        });
-                    }
-                }
-            }
-        })
+    //     socket?.on('notification', data => {
+    //         if (data.success) {
+    //             const mess = data.message
+    //             if (Notification.permission === 'granted') {
+    //                 if (pathRef?.current !== `/main/messages/${mess.email}`) {
+    //                     new Notification(`Message from: ${mess.email}`, {
+    //                         body: mess.message,
+    //                         icon: data.avatar
+    //                     }).addEventListener('click', () => {
+    //                         window.open(`https://chat-drab-nine.vercel.app/main/messages/${mess.email}`);
+    //                     });
+    //                 }
+    //             }
+    //         }
+    //     })
 
-        return () => {
-            socket?.off('sideSeen')
-            socket?.off('changeSide')
-            if (user?.email) {
-                socket?.emit('leave', { room })
-            }
-            socket.disconnect();
-        };
-    }, [])
+    //     return () => {
+    //         socket?.off('sideSeen')
+    //         socket?.off('changeSide')
+    //         if (user?.email) {
+    //             socket?.emit('leave', { room })
+    //         }
+    //         socket.disconnect();
+    //     };
+    // }, [])
 
 
 
