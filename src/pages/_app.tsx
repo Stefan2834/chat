@@ -22,7 +22,7 @@ const theme = createTheme({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-    const { session, ...restPageProps } = pageProps;
+    const { ...restPageProps } = pageProps;
     const router = useRouter()
 
 
