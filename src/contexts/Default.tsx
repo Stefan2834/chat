@@ -1,15 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, useReducer, ReactNode } from 'react';
-import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router';
-import io, { Socket } from 'socket.io-client';
-import { useSideData } from '@/customHooks/useSidebar';
+import axios from 'axios';
 import DynamicWidthComponent from '@/components/DynamicWidth';
 
 interface DefaultContextValue {
     state: State;
     dispatch: Dispatch;
     server: String;
-    session: any;
     user: User | null;
     setUser: (user: User | null) => void,
     navOpen: boolean,
@@ -49,14 +46,13 @@ interface DefaultProviderProps {
 
 type User = {
     email: string | null,
-    name: string | null,
+    username: string | null,
     avatar: string | null
 }
 
 
 export function DefaultProvider({ children }: DefaultProviderProps) {
     const initialState: State = { number: 0 }
-    const { data: session, status } = useSession()
     const router = useRouter()
     const [state, dispatch] = useReducer<ReducerFunction>(Reducer, initialState);
     const [user, setUser] = useState<User | null>(null);
@@ -67,28 +63,34 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
 
 
     useEffect(() => {
-        console.log(session)
-        if (status === "loading") {
-            console.log('Loading')
-        } else if (status === "authenticated") {
-            setLoading(false);
-            setUser({
-                email: session?.user?.email || null,
-                name: session?.user?.name || null,
-                avatar: session?.user?.image || null,
-            })
+        if (router.asPath !== '/') {
+            axios.post(`${server}/login/getUser`, {}, { withCredentials: true })
+                .then(response => {
+                    if (response?.data?.success) {
+                        const userRes = response?.data?.user
+                        setUser({
+                            username: userRes.username,
+                            email: userRes.email,
+                            avatar: userRes.avatar
+                        })
+                        if (router.asPath === '/') {
+                            router.push('/main/home')
+                        }
+                    } else {
+                        console.log(response.data)
+                        if (router.asPath !== '/') {
+                            router.push('/')
+                        }
+                    }
+                })
+                .catch(err => console.log(err))
+                .finally(() => setLoading(false))
         } else {
-            // setUser({
-            //     email: 'iosifs617@gmail.com',
-            //     name: 'Stefan',
-            //     avatar: 'https://lh3.googleusercontent.com/a/AAcHTtfIxo4XhUkrkxv2RnUwqSp9Yg2_GnrMTB0aI73cAop6u-M=s96-c'
-            // })
-            setUser(null)
-            router.push("/");
             setLoading(false)
         }
-        
-    }, [status]);
+    }, [])
+
+
 
     useEffect(() => {
         const root = document.documentElement;
@@ -107,13 +109,11 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
         }
 
     }, [darkTheme])
-    console.log(user)
 
 
     const value: DefaultContextValue = {
         state,
         dispatch,
-        session,
         server,
         user, setUser,
         navOpen, setNavOpen,

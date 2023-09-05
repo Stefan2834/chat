@@ -55,7 +55,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         });
         setSocket(socket)
         const room = `side-${user?.email}`
-        socket?.emit('join', { room })
+        if (user?.email) {
+            socket?.emit('join', { room })
+        }
 
         if (Notification.permission !== 'denied' && Notification.permission !== "granted") {
             Notification.requestPermission()
@@ -108,7 +110,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         return () => {
             socket?.off('sideSeen')
             socket?.off('changeSide')
-            socket?.emit('leave', { room })
+            if(user?.email) {
+                socket?.emit('leave', { room })
+            }
             socket.disconnect();
         };
     }, [])

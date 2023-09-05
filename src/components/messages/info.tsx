@@ -31,21 +31,29 @@ export default function Info({ activeBg, setBg, setInfo, setError, email, emailS
 
   const modifyBg = (value: string) => {
     setLoading(true)
-    axios.post(`${process.env.NEXT_PUBLIC_SERVER}/messages/background`, {
-      bg: value,
-      email: email,
-      emailSend: emailSend
+    axios.post(`${process.env.NEXT_PUBLIC_SERVER}/graphql`, {
+      query: `mutation ($bg: String!, $email: String!, $emailSend: String!) {
+        changeBg(bg: $bg, email: $email, emailSend: $emailSend)
+      }`,
+      variables: {
+        email: email,
+        emailSend: emailSend,
+        bg: value
+      }
     }).then(data => {
-      if (data.data.success) {
+      console.log(data)
+      if (data.data.data.changeBg) {
         setBg(value)
         setInfo(false)
-        setLoading(false)
       } else {
-        setError(data.data.message)
+        console.error(data)
+        setError('An error has ocurred')
       }
     }).catch(err => {
       console.error(err)
       setError(err.message)
+    }).finally(() => {
+      setLoading(false)
     })
   }
 
@@ -69,31 +77,31 @@ export default function Info({ activeBg, setBg, setInfo, setError, email, emailS
             )
           }
         })}
-      <div className='flex justify-evenly items-center w-full pb-8'>
-        <Button variant="contained" sx={{ textTransform: 'none', mt: '25px', fontSize: '22px' }}
-          onClick={() => { modifyBg(newBg) }} disabled={loading}
-        >
-          Save
-          {loading && (
-            <CircularProgress
-              size={24}
-              sx={{
-                color: 'red',
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                marginTop: '-12px',
-                marginLeft: '-12px',
-              }}
-            />
-          )}
-        </Button>
-        <Button variant="text" sx={{ textTransform: 'none', mt: '25px', fontSize: '22px' }}
-          onClick={() => setInfo(false)}
-        >
-          Back
-        </Button>
-      </div>
+        <div className='flex justify-evenly items-center w-full pb-8'>
+          <Button variant="contained" sx={{ textTransform: 'none', mt: '25px', fontSize: '22px' }}
+            onClick={() => { modifyBg(newBg) }} disabled={loading}
+          >
+            Save
+            {loading && (
+              <CircularProgress
+                size={24}
+                sx={{
+                  color: 'red',
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  marginTop: '-12px',
+                  marginLeft: '-12px',
+                }}
+              />
+            )}
+          </Button>
+          <Button variant="text" sx={{ textTransform: 'none', mt: '25px', fontSize: '22px' }}
+            onClick={() => setInfo(false)}
+          >
+            Back
+          </Button>
+        </div>
       </div>
     </div>
   )

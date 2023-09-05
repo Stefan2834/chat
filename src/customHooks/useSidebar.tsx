@@ -31,19 +31,38 @@ export const useSideData = (email: string | null | undefined): UseSideDataResult
         const fetchSideData = async () => {
             const server = process.env.NEXT_PUBLIC_SERVER;
             try {
-                const response = await axios.post(`${server}/messages/sidebar/`, {
-                    email: email,
-                    jump: 0
-                });
-                if (response?.data?.success) {
-                    setSidebar(response?.data?.side);
-                    setHasMoreData(response?.data?.hasMoreData)
+                const response = await axios.post(`${server}/graphql`, {
+                    query: `query ($email: String!, $jump: Int!) {
+                        getSidebar(email: $email, jump: $jump) {
+                        success
+                        message
+                        hasMoreData
+                        side {
+                            username
+                            lastMsg
+                            lastYou
+                            date
+                            seen
+                            avatar
+                            email
+                        }
+                        }
+                    }`,
+                    variables: {
+                        email: email,
+                        jump: 0
+                    }
+                })
+                if (response?.data?.data?.getSidebar?.success) {
+                    setSidebar(response.data.data.getSidebar.side)
+                    setHasMoreData(response.data.data.getSidebar.hasMoreData)
                 } else {
                     setSidebar([])
-                    console.error(response?.data?.message)
-                    setError(response?.data?.message);
+                    console.error(response.data.data.getSidebar.message)
+                    setError(response.data.data.getSidebar.message)
                 }
-            } catch (error : any) {
+                console.log(response)
+            } catch (error: any) {
                 console.error('Error fetching side data:', error);
                 setError(`An error occurred while fetching sidebar data. ${error?.message}`);
                 setSidebar([]);

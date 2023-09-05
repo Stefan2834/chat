@@ -2,9 +2,12 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import { GetServerSideProps } from 'next/types'
 import Sidebar from '@/components/Sidebar'
-import { TextField, IconButton, Avatar, Button, Snackbar, Alert, CircularProgress } from '@mui/material';
+import { TextField, IconButton, Avatar, Button, Snackbar, Alert, CircularProgress, Input } from '@mui/material';
 import Image from 'next/image';
 import Info from '@/components/messages/info';
+import { parse } from 'cookie';
+import jwt from 'jsonwebtoken';
+import { Suspense } from 'react';
 
 import EmojiPicker from 'emoji-picker-react';
 
@@ -15,10 +18,27 @@ import send from '../../../svg/black/send.svg'
 import infoPhoto from '../../../svg/black/info.svg'
 import backPhoto from '../../../svg/black/back.svg'
 
-import { getSession } from "next-auth/react"
 import { useRouter } from 'next/router';
 import { useDefault } from '@/contexts/Default';
 import { useSocket } from '@/contexts/Socket';
+
+const query = `query ($email: String!, $secondEmail: String!, $jump: Int!) {
+   messages: getMessages(email: $email, secondEmail: $secondEmail, jump: $jump) {
+     success
+     message
+     avatar
+     username
+     hasMoreData
+     seen
+     bg
+     messages {
+       message
+       date
+       email
+       photo
+     }
+   }
+ }`
 
 
 interface MessagePageProps {
@@ -26,7 +46,8 @@ interface MessagePageProps {
       email: string | null | undefined,
       date: number,
       message: string,
-      loading?: boolean
+      loading?: boolean,
+      photo?: string | null,
    }[],
    avatar: string,
    username: string,
@@ -64,7 +85,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
    const router = useRouter()
 
-   const { user } = useDefault()
+   const { user, server } = useDefault()
    const { socket } = useSocket()
 
    const submitRef = useRef<HTMLInputElement | null>(null);
@@ -78,6 +99,8 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
    const [messages, setMessages] = useState(messagesData)
    const [info, setInfo] = useState<boolean>(false)
    const [bg, setBg] = useState<string>(background)
+   const [selectedPhoto, setSelectedPhoto] = useState<any>(null)
+   const [viewPhoto, setViewPhoto] = useState<string | null>(null)
 
 
 
@@ -88,20 +111,23 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
          if (- scrollTop + clientHeight >= scrollHeight - 250) {
             loading.current = true
             try {
-               const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER}/messages/messages/`, {
-                  email: user?.email,
-                  secondEmail: params,
-                  jump: messages?.length
-               });
-               if (response?.data?.success) {
+               const response = await axios.post(`${server}/graphql`, {
+                  query: query,
+                  variables: {
+                     email: user?.email,
+                     secondEmail: params,
+                     jump: messages?.length
+                  }
+               })
+               if (response?.data?.data?.messages?.success) {
                   setMessages(prevMessages => [
                      ...prevMessages,
-                     ...(response?.data?.messages || [])
+                     ...(response?.data?.data?.messages?.messages || [])
                   ]);
-                  setHasMoreData(response?.data?.hasMoreData)
+                  setHasMoreData(response?.data?.data?.messages?.hasMoreData)
                } else {
-                  console.error(response?.data?.message)
-                  setError(response?.data?.message);
+                  console.error(response?.data?.data?.messages?.message)
+                  setError(response?.data?.data?.messages?.message);
                }
             } catch (error) {
                console.error('Error fetching side data:', error);
@@ -182,6 +208,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                   email: message?.email,
                   date: message?.date,
                   message: message?.message,
+                  photo: message?.photo
                }, ...prevMessages,]);
             }
          } else setError(newMessage.message)
@@ -204,30 +231,38 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
 
    const handleSubmit = () => {
-      const mess = submitRef?.current?.value;
-      const date = Date.now()
-      const newMessage = {
-         emailSend: user?.email,
-         emailReceive: params,
-         avatarSend: user?.avatar,
-         avatarReceive: avatar,
-         userSend: user?.name,
-         userReceive: username,
-         date: date,
-         message: mess || '',
+      try {
+         const mess = submitRef?.current?.value;
+         const date = Date.now()
+         const newMessage = {
+            emailSend: user?.email,
+            emailReceive: params,
+            avatarSend: user?.avatar,
+            avatarReceive: avatar,
+            userSend: user?.username,
+            userReceive: username,
+            date: date,
+            message: mess || '',
+            photo: selectedPhoto?.photo
+         }
+         setSelectedPhoto(null)
+         setSeen(false)
+         setEmoji(false)
+         setMessages((m) => [{
+            email: user?.email,
+            date: date,
+            message: mess || '',
+            loading: true,
+            photo: selectedPhoto?.src
+         }, ...m])
+         socket?.emit('message', { ...newMessage, room: [user?.email, params].sort().join('-') })
+         if (submitRef.current) submitRef.current.value = '';
+         if (scrollRef.current) scrollRef.current.scrollTop = 0;
+      } catch (err) {
+         console.log(err)
       }
-      setSeen(false)
-      setEmoji(false)
-      setMessages((m) => [{
-         email: user?.email,
-         date: date,
-         message: mess || '',
-         loading: true,
-      }, ...m])
-      socket?.emit('message', { ...newMessage, room: [user?.email, params].sort().join('-') })
-      if (submitRef.current) submitRef.current.value = '';
-      if (scrollRef.current) scrollRef.current.scrollTop = 0;
    };
+
 
 
    return (
@@ -241,6 +276,12 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
             {window.innerWidth >= 1000} {
                <Sidebar className='block mobile:hidden' />
             }
+            {viewPhoto && (
+               <div className='w-screen h-screen z-40 absolute flex items-center justify-center left-0' onClick={() => setViewPhoto(null)}>
+                  <div className='absolute w-full h-full bg-black opacity-50' />
+                  <img src={viewPhoto} alt='This photo was deleted from the database' className='h-[calc(100%-100px)] max-w-[calc(100%-100px)] w-auto relative z-10' />
+               </div>
+            )}
             <div className='w-[calc(100%-384px)] h-full relative flex flex-col ml-96 mobile:w-full mobile:ml-0 mobile:h-[calc(100vh-120px)] mobile:fixed mobile:top-0'>
                {err === "User don't exist" ? (
                   <div className='w-full h-screen flex flex-row items-center justify-center'>
@@ -291,7 +332,14 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                              <div className={`flex flex-col text-right bg-white p-3 overflow-hidden rounded-3xl items-start justify-start w-full`}
                                                 style={{ borderTopRightRadius: borderTop, borderBottomRightRadius: borderBottom }}
                                              >
-                                                <div className='mr-2'>{mess.message}</div>
+                                                {mess.photo && (
+                                                   <div className='cursor-pointer w-96 h-auto bg-center bg-no-repeat bg-contain flex items-center justify-center'
+                                                      onClick={() => setViewPhoto(mess.photo)}
+                                                   >
+                                                      <img src={mess.photo} className='w-full h-auto' alt='This photo was deleted from the database' />
+                                                   </div>
+                                                )}
+                                                <div className='mr-2 '>{mess.message}</div>
                                              </div>
                                              {mess?.loading && (
                                                 <CircularProgress size={16} sx={{ ml: 1, mr: 1, color: 'white' }} />
@@ -307,7 +355,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                     const borderTop = !toOld && index !== messages.length - 1 && messages[index + 1].email !== user?.email ? '0px' : '24px'
                                     return (
                                        <>
-                                          <div className='w-auto max-w-[60%] p-0.5 self-start ml-2 flex justify-center items-center' key={index}>
+                                          <div className='w-auto max-w-[60%] p-0.5 self-start ml-2 flex justify-center items-end' key={index}>
                                              {borderBottom === '24px' && (
                                                 <Avatar src={avatar} onClick={() => router.push(`/main/users/${mess.email}`)}
                                                    sx={{ cursor: 'pointer', ml: -5 }}
@@ -316,6 +364,13 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                              <div className='flex flex-col bg-white p-3 items-start overflow-hidden justify-start rounded-3xl ml-2 w-full'
                                                 style={{ borderTopLeftRadius: borderTop, borderBottomLeftRadius: borderBottom }}
                                              >
+                                                {mess.photo && (
+                                                   <div className='cursor-pointer w-96 h-auto bg-center bg-no-repeat bg-contain flex items-center justify-center'
+                                                      onClick={() => setViewPhoto(mess.photo)}
+                                                   >
+                                                      <img src={mess.photo} className='w-full h-auto' alt='This photo was deleted from the database' />
+                                                   </div>
+                                                )}
                                                 <div className=''>{mess.message}</div>
                                              </div>
                                           </div>
@@ -377,19 +432,56 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                     </IconButton>
                                  </>
                               )}
-                              <IconButton aria-label="Example" sx={{
-                                 "@media (min-width: 1000px)": {
-                                    mr: 2,
-                                 },
-                              }}>
-                                 <Image src={files} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
-                              </IconButton>
+                              <Input
+                                 inputProps={{
+                                    accept: 'image/*',
+                                 }}
+                                 id="file-input"
+                                 type="file"
+                                 style={{ display: 'none' }}
+                                 onChange={(event: any) => {
+                                    const file = event.target.files[0];
+                                    if (file) {
+                                       const reader = new FileReader();
+                                       reader.onload = (e: any) => {
+                                          setSelectedPhoto({ photo: file, src: e.target.result });
+                                       };
+                                       reader.readAsDataURL(file);
+                                    } else {
+                                       setSelectedPhoto(null);
+                                    }
+                                 }
+                                 }
+                              />
+                              <label htmlFor="file-input">
+                                 <Button
+                                    sx={{
+                                       "@media (min-width: 1000px)": {
+                                          mr: 2,
+                                       },
+                                       bgcolor: "transparent"
+                                    }}
+                                    component="span"
+                                 >
+                                    <Image src={files} alt='Emoji' width={35} height={35} className='cursor-pointer msg-img' />
+                                 </Button>
+                              </label>
+                              {selectedPhoto && (
+                                 <div className="w-24 h-12 flex items-center justify-center mr-2 bg-center bg-contain bg-no-repeat relative"
+                                    style={{ backgroundImage: `url(${selectedPhoto.src})` }}>
+                                    <div className='w-4 h-4 bg-black absolute right-0 top-0 rounded-full cursor-pointer text-white flex items-center justify-center text-xs'
+                                       onClick={() => setSelectedPhoto(null)}
+                                    >
+                                       x
+                                    </div>
+                                 </div>
+                              )}
                               <TextField id="outlined-basic" fullWidth label="Type..." variant="outlined"
                                  inputProps={{
                                     maxLength: 200,
                                     className: 'msg-input',
                                  }}
-                                 required
+                                 required={!selectedPhoto}
                                  inputRef={submitRef}
                               />
                               <IconButton aria-label="Example" type='submit'
@@ -412,35 +504,60 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
 export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (context) => {
    const { email } = context.query;
-   const session = await getSession(context)
    const server = process.env.NEXT_PUBLIC_SERVER || ''
-   const messages = await axios.post(`${server}/messages/messages/`, {
-      email: session?.user?.email || 'iosifs617@gmail.com',
-      secondEmail: email,
-      jump: 0
-   })
-   if (messages?.data?.success) {
+
+
+   try {
+
+      const cookieHeader = context.req.headers.cookie || '';
+      const cookies = parse(cookieHeader);
+      const accessToken = cookies.accessToken || '';
+      const decoded: any = process.env.ACCESS_TOKEN ? jwt.verify(accessToken, process.env.ACCESS_TOKEN, { ignoreExpiration: true }) : 'SALL'
+
+      const messages = await axios.post(`${server}/graphql`, {
+         query: query,
+         variables: {
+            email: decoded?.email,
+            secondEmail: email,
+            jump: 0
+         }
+      })
+      if (messages?.data?.data?.messages?.success) {
+         return {
+            props: {
+               messagesData: messages?.data?.data?.messages?.messages || [],
+               avatar: messages?.data?.data?.messages?.avatar || '',
+               username: messages?.data?.data?.messages?.username || '',
+               hasSeen: messages?.data?.data?.messages?.seen || false,
+               background: messages?.data?.data?.messages?.bg || 'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg',
+               params: email as string,
+               err: null,
+               revalidate: 1,
+            },
+         };
+      } else return {
+         props: {
+            messagesData: [],
+            avatar: '',
+            username: '',
+            hasSeen: false,
+            background: '',
+            params: null,
+            err: messages?.data?.data?.messages?.message
+         }
+      }
+   } catch (err: any) {
+      console.log(err)
       return {
          props: {
-            messagesData: messages?.data?.messages || [],
-            avatar: messages?.data?.avatar || '',
-            username: messages?.data?.username || '',
-            hasSeen: messages?.data?.seen || false,
-            background: messages?.data.bg || 'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg',
-            params: email as string,
-            err: null,
-            revalidate: 1,
-         },
-      };
-   } else return {
-      props: {
-         messagesData: [],
-         avatar: '',
-         username: '',
-         hasSeen: false,
-         background: '',
-         params: null,
-         err: messages?.data?.message
+            messagesData: [],
+            avatar: '',
+            username: '',
+            hasSeen: false,
+            background: '',
+            params: null,
+            err: err.message
+         }
       }
    }
 }

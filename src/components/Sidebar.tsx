@@ -43,7 +43,7 @@ export default function Sidebar({ className }: { className?: string }) {
         hasMoreData,
         setHasMoreData
     } = useSocket()
-    const { user } = useDefault()
+    const { user, server } = useDefault()
     const scrollRef = useRef<HTMLDivElement | null>(null)
     const loading = useRef<boolean>(false)
     const router = useRouter()
@@ -59,19 +59,37 @@ export default function Sidebar({ className }: { className?: string }) {
             if (scrollTop + clientHeight >= scrollHeight - 250) {
                 loading.current = true
                 try {
-                    const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER}/messages/sidebar/`, {
-                        email: user?.email,
-                        jump: sidebar?.length === 0 ? 10 : sidebar?.length
-                    });
-                    if (response?.data?.success) {
+                    const response = await axios.post(`${server}/graphql`, {
+                        query: `query ($email: String!, $jump: Int!) {
+                            getSidebar(email: $email, jump: $jump) {
+                            success
+                            message
+                            hasMoreData
+                            side {
+                                username
+                                lastMsg
+                                lastYou
+                                date
+                                seen
+                                avatar
+                                email
+                                }
+                            }
+                        }`,
+                        variables: {
+                            email: user?.email,
+                            jump: sidebar?.length
+                        }
+                    })
+                    if (response?.data?.data?.getSidebar?.success) {
                         setSidebar(prevSidebar => [
                             ...prevSidebar,
-                            ...(response?.data?.side || [])
+                            ...(response.data.data.getSidebar.side || [])
                         ]);
-                        setHasMoreData(response?.data?.hasMoreData)
+                        setHasMoreData(response.data.data.getSidebar.hasMoreData)
                     } else {
-                        console.error(response?.data?.message)
-                        setError(response?.data?.message);
+                        console.error(response.data.data.getSidebar.message)
+                        setError(response.data.data.getSidebar.message)
                     }
                 } catch (error) {
                     console.error('Error fetching side data:', error);
@@ -100,7 +118,7 @@ export default function Sidebar({ className }: { className?: string }) {
 
     return (
         <Paper elevation={3} className={`w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start ${className} mobile:w-full mobile:mt-16 mobile:h-[calc(100%-64px)] mobile:pb-12`}
-            ref={scrollRef} 
+            ref={scrollRef}
         >
             <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error" sx={{ width: '100%', marginBottom: '40px' }}>
