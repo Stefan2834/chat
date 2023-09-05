@@ -1,6 +1,6 @@
 import '../app/globals.css'
 import { Inter } from 'next/font/google'
-
+import Head from 'next/head'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,8 +19,8 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en">
-      <head>
+    <div className={inter.className}>
+      <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Chat-app</title>
@@ -28,12 +28,10 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
-      </head>
-      <body className={inter.className}>
-        <main>
-          {children}
-        </main>
-      </body>
-    </html>
+      </Head>
+      <main>
+        {children}
+      </main>
+    </div>
   )
 }
