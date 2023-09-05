@@ -103,6 +103,8 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             }
         })
 
+        setLoading(false)
+
         return () => {
             socket?.off('sideSeen')
             socket?.off('changeSide')
@@ -123,8 +125,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
     return (
         <SocketContext.Provider value={value}>
-            {!loading ? children
-                : (<>LOADINGGG</>)}
+            {!loading && children}
         </SocketContext.Provider>
     )
 }
