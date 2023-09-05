@@ -45,6 +45,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     const { sidebar, setSidebar, isLoading, error, setError, hasMoreData, setHasMoreData } = useSideData(user?.email || '');
 
 
+    
     useEffect(() => {
         pathRef.current = router.asPath;
     }, [router.asPath]);
