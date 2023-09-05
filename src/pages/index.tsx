@@ -104,7 +104,7 @@ export default function Index() {
     }
 
     return (
-        <div className='w-full h-screen flex items-center justify-center'>
+        <div className='w-full flex items-center justify-center relative h-screen overflow-y-scroll mobile:pb-32 mobile:pt-96 mobile:fixed'>
             <div className='flex items-start justify-center flex-wrap'>
                 <form className='flex flex-col items-center justify-center mx-4' onSubmit={(e: any) => { e.preventDefault(); handleRegister() }}>
                     <div className='font-semibold text-md'>Register</div>
