@@ -33,8 +33,8 @@ export default function App({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={theme}>
             <DefaultProvider>
                 <SocketProvider>
-                    {/* <Navbar /> */}
-                    <Layout>
+                    <Navbar />
+                    {/* <Layout> */}
                         {shouldTransition ? (
                             <TransitionGroup className="transition-group">
                                 {shouldTransition === 'right' ? (
@@ -62,7 +62,7 @@ export default function App({ Component, pageProps }: AppProps) {
                         ) : (
                             <Component {...pageProps} />
                         )}
-                    </Layout>
+                    {/* </Layout> */}
                 </SocketProvider>
             </DefaultProvider>
         </ThemeProvider>
