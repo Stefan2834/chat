@@ -40,12 +40,12 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     const { user, server } = useDefault()
     const router = useRouter()
     const pathRef = useRef<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
     const [socket, setSocket] = useState<Socket | null>(null)
     const { sidebar, setSidebar, isLoading, error, setError, hasMoreData, setHasMoreData } = useSideData(user?.email || '');
 
 
-    
+
     useEffect(() => {
         pathRef.current = router.asPath;
     }, [router.asPath]);
@@ -64,7 +64,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             Notification.requestPermission()
         };
 
-        setLoading(false)
 
         socket?.on('changeSide', (newSidebar) => {
             setSidebar(s => {
@@ -111,7 +110,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         return () => {
             socket?.off('sideSeen')
             socket?.off('changeSide')
-            if(user?.email) {
+            if (user?.email) {
                 socket?.emit('leave', { room })
             }
             socket.disconnect();
@@ -128,7 +127,8 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
     return (
         <SocketContext.Provider value={value}>
-            {!loading && children}
+            {!loading ? children
+                : (<>LOADINGGG</>)}
         </SocketContext.Provider>
     )
 }

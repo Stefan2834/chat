@@ -123,10 +123,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
     return (
         <DefaultContext.Provider value={value}>
             <DynamicWidthComponent navbar={navOpen} >
-                {!loading ? children
-                    : (
-                        <div>Loading</div>
-                    )}
+                {!loading && children}
             </DynamicWidthComponent>
         </DefaultContext.Provider>
     )

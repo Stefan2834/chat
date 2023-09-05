@@ -35,7 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 <SocketProvider>
                     <Navbar />
                     <Layout>
-                        {/* {shouldTransition ? (
+                        {shouldTransition ? (
                             <TransitionGroup className="transition-group">
                                 {shouldTransition === 'right' ? (
                                     <CSSTransition
@@ -60,8 +60,8 @@ export default function App({ Component, pageProps }: AppProps) {
                                 )}
                             </TransitionGroup>
                         ) : (
-                        )} */}
-                        <Component {...pageProps} />
+                            <Component {...pageProps} />
+                        )}
                     </Layout>
                 </SocketProvider>
             </DefaultProvider>
