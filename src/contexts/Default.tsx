@@ -20,8 +20,6 @@ interface DefaultContextValue {
     setDarkTheme: (darkTheme: boolean) => void,
     accessToken: string,
     setAccessToken: (accessToken: string) => void,
-    refreshToken: string,
-    setRefreshToken: (refreshToken: string) => void,
 }
 type Action = { type: 'test'; payload: { number: number } };
 type Dispatch = (action: Action) => void;
@@ -69,14 +67,11 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
     const [navOpen, setNavOpen] = useState<boolean>(true)
     const [darkTheme, setDarkTheme] = useState<boolean>(true)
     const [accessToken, setAccessToken] = useCookie('accessToken', '')
-    const [refreshToken, setRefreshToken] = useCookie('refresToken', '')
     const server: String = process.env.NEXT_PUBLIC_SERVER || ''
 
 
     useEffect(() => {
-        axios.post(`${server}/login/getUser`, {
-            refreshToken
-        }, { headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
+        axios.post(`${server}/login/getUser`, {}, { headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
             .then(response => {
                 console.log(response)
                 if (response?.data?.success) {
@@ -118,6 +113,14 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
 
     }, [darkTheme])
 
+    useEffect(() => {
+        if (user && router.asPath === '/') {
+            router.push('/main/home')
+        } else if (!user && router.asPath !== '/') {
+            router.push('/main/home')
+        }
+    }, [router.asPath])
+
 
     const value: DefaultContextValue = {
         state,
@@ -127,24 +130,12 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
         navOpen, setNavOpen,
         darkTheme, setDarkTheme,
         accessToken, setAccessToken,
-        refreshToken, setRefreshToken,
     };
 
     return (
         <DefaultContext.Provider value={value}>
             <DynamicWidthComponent navbar={navOpen}>
-                {!loading && (
-                    user ? (
-                        children
-                    ) : (
-                        (() => {
-                            return <>
-                                <Navbar />
-                                <Login />;
-                            </>
-                        })()
-                    )
-                )}
+                {!loading && (children)}
             </DynamicWidthComponent>
         </DefaultContext.Provider>
     )

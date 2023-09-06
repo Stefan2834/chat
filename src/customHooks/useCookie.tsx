@@ -9,7 +9,6 @@ interface CookieUpdaterProps {
 export function useCookie(cookieName: string, initialValue: string) {
     const [state, setState] = useState(() => {
         const storedValue = Cookies.get(cookieName)
-
         return storedValue !== undefined ? storedValue : initialValue;
     });
 

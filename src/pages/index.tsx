@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 
 
 export default function Login() {
-    const { server, setUser, setRefreshToken, setAccessToken } = useDefault()
+    const { server, setUser, setAccessToken } = useDefault()
     const router = useRouter()
     const usernameRegisterRef = useRef<HTMLInputElement>(null)
     const emailRegisterRef = useRef<HTMLInputElement>(null)
@@ -19,7 +19,6 @@ export default function Login() {
 
     useEffect(() => {
         setAccessToken('')
-        setRefreshToken('')
     }, [])
 
 
