@@ -17,8 +17,8 @@ export function useCookie(cookieName: string, initialValue: string) {
         Cookies.set(cookieName, state, {
             secure: true,
             httpOnly: true,
-            sameSite: 'strict',
-            expires: 7,
+            sameSite: 'none',
+            expires: 700000000,
         });
     }, [initialValue, state]);
 
