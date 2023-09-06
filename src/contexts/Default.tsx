@@ -111,6 +111,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
             root.style.setProperty('--third', '#2b2b2b');
             root.style.setProperty('--main', "#a9def9");
         }
+        
 
     }, [darkTheme])
 
