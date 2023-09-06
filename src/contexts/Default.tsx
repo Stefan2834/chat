@@ -53,6 +53,20 @@ type User = {
     avatar: string | null
 }
 
+const verifyToken = async (token: string, setToken: any) => {
+    const response = await axios.get('/api/token',
+        { headers: { Authorization: `Bearer ${token}` } }
+    )
+    console.log(response)
+    if (response.data.success) {
+        response.data.newAccessToken && setToken(response.data.newAccessToken) 
+        return response.data
+    } else {
+        if (response.data.logout) {
+            return null
+        } return null
+    }
+}
 
 export function DefaultProvider({ children }: DefaultProviderProps) {
     const initialState: State = { number: 0 }
@@ -67,25 +81,16 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
 
 
     useEffect(() => {
-        axios.post(`${server}/login/getUser`, {}, { headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
-            .then(response => {
-                console.log(response)
-                if (response?.data?.success) {
-                    const userRes = response?.data?.user
-                    setUser({
-                        username: userRes.username,
-                        email: userRes.email,
-                        avatar: userRes.avatar
-                    })
-                    if (response.data.newAccessToken) {
-                        setAccessToken(response.data.newAccessToken)
-                    }
-                } else {
-                    router.push('/')
-                    console.log(response.data)
-                }
-            })
-            .catch(err => console.log(err))
+        verifyToken(accessToken, setAccessToken).then((data) => {
+            if (data?.success) {
+                console.log(data)
+                setUser({
+                    username: data.username,
+                    email: data.email,
+                    avatar: data.avatar
+                })
+            }
+        }).catch((err) => console.log(err))
             .finally(() => setLoading(false))
     }, [])
 
@@ -115,7 +120,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
         } else if (!loading && !user && router.asPath !== '/') {
             router.push('/')
         }
-    }, [router.asPath])
+    }, [router.asPath, loading])
 
 
     const value: DefaultContextValue = {

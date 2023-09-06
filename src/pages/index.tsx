@@ -65,14 +65,18 @@ export default function Login() {
             }, { withCredentials: true })
             if (response?.data?.success) {
                 console.log(response)
-                const dbUser = response.data.user
-                setAccessToken(response?.data?.accessToken)
-                setUser({
-                    email: dbUser.email,
-                    username: dbUser.username,
-                    avatar: dbUser.avatar
+                await axios.post('/api/token', { refreshToken: response.data.refreshToken }).then(data => {
+                    if (data.data.success) {
+                        const dbUser = response.data.user
+                        setAccessToken(response?.data?.accessToken)
+                        setUser({
+                            email: dbUser.email,
+                            username: dbUser.username,
+                            avatar: dbUser.avatar
+                        })
+                        router.push('/main/home')
+                    } else alert('Unable to save the login information. Try again')
                 })
-                router.push('/main/home')
             } else {
                 console.log(response)
                 alert(response?.data?.message)

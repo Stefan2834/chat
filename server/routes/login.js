@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cookie = require('cookie');
 const { Users, Messages } = require('./Schema');
 const accessExpire = '10s'
 
@@ -15,19 +14,7 @@ const verifyToken = (req, res, next) => {
         }
         jwt.verify(accessToken, process.env.ACCESS_TOKEN, async (err, decoded) => {
             if (err) {
-                if (err.name === 'TokenExpiredError') {
-                    const refreshToken = req.cookies.refreshToken
-                    console.log(refreshToken)
-                    if (!refreshToken) return res.json({ success: false, message: 'Refresh token missing', action: 'logout' })
-                    jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, user) => {
-                        if (err) return res.json({ success: false, message: 'Invalid refresh token', action: 'logout' })
-                        const newAccessToken = jwt.sign({ username: user.username, avatar: user.avatar, email: user.email }, process.env.ACCESS_TOKEN, { expiresIn: accessExpire });
-                        req.user = user
-                        req.newAccessToken = newAccessToken
-                    })
-                } else {
-                    return res.json({ success: false, message: 'Invalid access token', action: 'logout' });
-                }
+                return res.json({ success: false, message: 'Invalid token', action: 'logout' });
             } else {
                 req.user = decoded;
             }
@@ -85,27 +72,12 @@ router.post('/login', async (req, res) => {
 
         const refreshToken = jwt.sign({ username, avatar: user.avatar, email: user.email }, process.env.REFRESH_TOKEN)
 
-        const cookieOptions = {
-            domain:'vercel.app',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            secure: true,
-            sameSite: 'none'
-        };
-        const refreshTokenCookie = cookie.serialize('refreshToken', refreshToken, cookieOptions);
 
-        res.setHeader('Set-Cookie', refreshTokenCookie);
-
-
-        res.json({ success: true, accessToken: accessToken, user: user });
+        res.json({ success: true, accessToken: accessToken, refreshToken: refreshToken, user: user });
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
     }
 });
-
-router.post('/getuser', verifyToken, async (req, res) => {
-    (req.newAccessToken)
-    res.json({ success: true, user: req.user, newAccessToken: req.newAccessToken })
-})
 
 module.exports = router;

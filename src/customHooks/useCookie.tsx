@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie'
 
-interface CookieUpdaterProps {
-    cookieName: string;
-    initialValue: string;
-}
-
 export function useCookie(cookieName: string, initialValue: string) {
     const [state, setState] = useState(() => {
         const storedValue = Cookies.get(cookieName)
@@ -13,14 +8,13 @@ export function useCookie(cookieName: string, initialValue: string) {
     });
 
     useEffect(() => {
-        console.log(cookieName, state)
         Cookies.set(cookieName, state, {
-            secure: false,
+            secure: true,
             httpOnly: false,
             path: '/' ,
             expires: 700000000,
         });
-    }, [initialValue, state]);
+    }, [state]);
 
 
     return [state, setState] as const;
