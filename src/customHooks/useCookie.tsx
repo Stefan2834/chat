@@ -13,8 +13,13 @@ export function useCookie(cookieName: string, initialValue: string) {
     });
 
     useEffect(() => {
-        console.log(cookieName,state)
-        Cookies.set(cookieName, state);
+        console.log(cookieName, state)
+        Cookies.set(cookieName, state, {
+            secure: true,
+            httpOnly: true,
+            sameSite: 'strict',
+            expires: 7,
+        });
     }, [initialValue, state]);
 
 

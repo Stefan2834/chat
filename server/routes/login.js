@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookie = require('cookie');
 const { Users, Messages } = require('./Schema');
+const accessExpire = '10s'
 
 const verifyToken = (req, res, next) => {
     const header = req.headers['authorization'];
@@ -20,7 +21,7 @@ const verifyToken = (req, res, next) => {
                     if (!refreshToken) return res.json({ success: false, message: 'Refresh token missing', action: 'logout' })
                     jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, user) => {
                         if (err) return res.json({ success: false, message: 'Invalid refresh token', action: 'logout' })
-                        const newAccessToken = jwt.sign({ username: user.username, avatar: user.avatar, email: user.email }, process.env.ACCESS_TOKEN, { expiresIn: '10s' });
+                        const newAccessToken = jwt.sign({ username: user.username, avatar: user.avatar, email: user.email }, process.env.ACCESS_TOKEN, { expiresIn: accessExpire });
                         req.user = user
                         req.newAccessToken = newAccessToken
                     })
@@ -80,7 +81,7 @@ router.post('/login', async (req, res) => {
             return res.json({ success: false, message: 'Authentification failed!' })
         }
 
-        const accessToken = jwt.sign({ username, avatar: user.avatar, email: user.email }, process.env.ACCESS_TOKEN, { expiresIn: '10s' });
+        const accessToken = jwt.sign({ username, avatar: user.avatar, email: user.email }, process.env.ACCESS_TOKEN, { expiresIn: accessExpire });
 
         const refreshToken = jwt.sign({ username, avatar: user.avatar, email: user.email }, process.env.REFRESH_TOKEN)
 
