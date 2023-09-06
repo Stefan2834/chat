@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from 'react'
 import axios from 'axios'
 
-import { TextField, Button } from '@mui/material'
+import { TextField, Button, setRef } from '@mui/material'
 import { useDefault } from '@/contexts/Default'
 import { useRouter } from 'next/router'
 
 
-export default function Index() {
-    const { server, setUser } = useDefault()
+export default function Login() {
+    const { server, setUser, setRefreshToken, setAccessToken } = useDefault()
     const router = useRouter()
     const usernameRegisterRef = useRef<HTMLInputElement>(null)
     const emailRegisterRef = useRef<HTMLInputElement>(null)
@@ -18,14 +18,8 @@ export default function Index() {
     const passLoginRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-        axios.post(`${server}/login/logout`, {}, { withCredentials: true })
-            .then(res => {
-                if (!res.data.success) {
-                    console.log('Unable to logout')
-                } else {
-                    setUser(null)
-                }
-            }).catch(err => console.log(err))
+        setAccessToken('')
+        setRefreshToken('')
     }, [])
 
 
@@ -77,6 +71,7 @@ export default function Index() {
             if (response?.data?.success) {
                 console.log(response)
                 const dbUser = response.data.user
+                setAccessToken(response?.data?.accessToken)
                 setUser({
                     email: dbUser.email,
                     username: dbUser.username,

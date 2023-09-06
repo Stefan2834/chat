@@ -2,6 +2,11 @@ import React, { createContext, useContext, useEffect, useState, useReducer, Reac
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import DynamicWidthComponent from '@/components/DynamicWidth';
+import { useCookie } from '@/customHooks/useCookie';
+import Login from '@/pages';
+import Navbar from '@/components/Navbar';
+
+
 
 interface DefaultContextValue {
     state: State;
@@ -13,6 +18,10 @@ interface DefaultContextValue {
     setNavOpen: (navOpen: boolean) => void,
     darkTheme: boolean,
     setDarkTheme: (darkTheme: boolean) => void,
+    accessToken: string,
+    setAccessToken: (accessToken: string) => void,
+    refreshToken: string,
+    setRefreshToken: (refreshToken: string) => void,
 }
 type Action = { type: 'test'; payload: { number: number } };
 type Dispatch = (action: Action) => void;
@@ -59,35 +68,34 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
     const [loading, setLoading] = useState<boolean>(true)
     const [navOpen, setNavOpen] = useState<boolean>(true)
     const [darkTheme, setDarkTheme] = useState<boolean>(true)
+    const [accessToken, setAccessToken] = useCookie('accessToken', '')
+    const [refreshToken, setRefreshToken] = useCookie('refresToken', '')
     const server: String = process.env.NEXT_PUBLIC_SERVER || ''
 
 
     useEffect(() => {
-        if (router.asPath !== '/') {
-            axios.post(`${server}/login/getUser`, {}, { withCredentials: true })
-                .then(response => {
-                    if (response?.data?.success) {
-                        const userRes = response?.data?.user
-                        setUser({
-                            username: userRes.username,
-                            email: userRes.email,
-                            avatar: userRes.avatar
-                        })
-                        if (router.asPath === '/') {
-                            router.push('/main/home')
-                        }
-                    } else {
-                        console.log(response.data)
-                        if (router.asPath !== '/') {
-                            router.push('/')
-                        }
+        axios.post(`${server}/login/getUser`, {
+            refreshToken
+        }, { headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
+            .then(response => {
+                console.log(response)
+                if (response?.data?.success) {
+                    const userRes = response?.data?.user
+                    setUser({
+                        username: userRes.username,
+                        email: userRes.email,
+                        avatar: userRes.avatar
+                    })
+                    if (response.data.newAccessToken) {
+                        setAccessToken(response.data.newAccessToken)
                     }
-                })
-                .catch(err => console.log(err))
-                .finally(() => setLoading(false))
-        } else {
-            setLoading(false)
-        }
+                } else {
+                    router.push('/')
+                    console.log(response.data)
+                }
+            })
+            .catch(err => console.log(err))
+            .finally(() => setLoading(false))
     }, [])
 
 
@@ -118,12 +126,25 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
         user, setUser,
         navOpen, setNavOpen,
         darkTheme, setDarkTheme,
+        accessToken, setAccessToken,
+        refreshToken, setRefreshToken,
     };
 
     return (
         <DefaultContext.Provider value={value}>
-            <DynamicWidthComponent navbar={navOpen} >
-                {!loading && children}
+            <DynamicWidthComponent navbar={navOpen}>
+                {!loading && (
+                    user ? (
+                        children
+                    ) : (
+                        (() => {
+                            return <>
+                                <Navbar />
+                                <Login />;
+                            </>
+                        })()
+                    )
+                )}
             </DynamicWidthComponent>
         </DefaultContext.Provider>
     )
