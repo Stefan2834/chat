@@ -110,9 +110,9 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
     }, [darkTheme])
 
     useEffect(() => {
-        if (user && router.asPath === '/') {
+        if (!loading && user && router.asPath === '/') {
             router.push('/main/home')
-        } else if (!user && router.asPath !== '/') {
+        } else if (!loading && !user && router.asPath !== '/') {
             router.push('/')
         }
     }, [router.asPath])
