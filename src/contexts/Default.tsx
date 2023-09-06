@@ -3,10 +3,6 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import DynamicWidthComponent from '@/components/DynamicWidth';
 import { useCookie } from '@/customHooks/useCookie';
-import Login from '@/pages';
-import Navbar from '@/components/Navbar';
-
-
 
 interface DefaultContextValue {
     state: State;
@@ -117,7 +113,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
         if (user && router.asPath === '/') {
             router.push('/main/home')
         } else if (!user && router.asPath !== '/') {
-            router.push('/main/home')
+            router.push('/')
         }
     }, [router.asPath])
 

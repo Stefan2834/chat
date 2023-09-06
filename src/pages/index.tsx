@@ -17,10 +17,6 @@ export default function Login() {
     const emailLoginRef = useRef<HTMLInputElement>(null)
     const passLoginRef = useRef<HTMLInputElement>(null)
 
-    useEffect(() => {
-        setAccessToken('')
-    }, [])
-
 
     const handleRegister = async () => {
         const username = usernameRegisterRef?.current?.value || null
