@@ -15,6 +15,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                             if (err.name === 'TokenExpiredError') {
                                 const refreshToken = req.cookies.refreshToken
                                 const refreshKey: string = process.env.REFRESH_TOKEN ? process.env.REFRESH_TOKEN : ''
+                                console.log(refreshKey, refreshToken)
                                 if (refreshToken && refreshKey) {
                                     jwt.verify(refreshToken, refreshKey, async (err: any, user: any) => {
                                         if (err) {
