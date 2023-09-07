@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import DynamicWidthComponent from '@/components/DynamicWidth';
 import { useCookie } from '@/customHooks/useCookie';
+import { Snackbar, Alert } from '@mui/material';
 
 interface DefaultContextValue {
     state: State;
@@ -16,6 +17,8 @@ interface DefaultContextValue {
     setDarkTheme: (darkTheme: boolean) => void,
     accessToken: string,
     setAccessToken: (accessToken: string) => void,
+    error: null | string,
+    setError: (error: null | string) => void
 }
 type Action = { type: 'test'; payload: { number: number } };
 type Dispatch = (action: Action) => void;
@@ -53,13 +56,13 @@ type User = {
     avatar: string | null
 }
 
-const verifyToken = async (token: string, setToken: any) => {
-    const response = await axios.get('/api/token',
+export const verifyToken = async (token: string, setToken: any) => {
+    const response = await axios.post('/api/token', {},
         { headers: { Authorization: `Bearer ${token}` } }
     )
     console.log(response)
     if (response.data.success) {
-        response.data.newAccessToken && setToken(response.data.newAccessToken) 
+        response.data.newAccessToken && setToken(response.data.newAccessToken)
         return response.data
     } else {
         if (response.data.logout) {
@@ -77,6 +80,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
     const [navOpen, setNavOpen] = useState<boolean>(true)
     const [darkTheme, setDarkTheme] = useState<boolean>(true)
     const [accessToken, setAccessToken] = useCookie('accessToken', '')
+    const [error, setError] = useState<null | string>(null)
     const server: String = process.env.NEXT_PUBLIC_SERVER || ''
 
 
@@ -111,7 +115,7 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
             root.style.setProperty('--third', '#2b2b2b');
             root.style.setProperty('--main', "#a9def9");
         }
-        
+
 
     }, [darkTheme])
 
@@ -132,12 +136,26 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
         navOpen, setNavOpen,
         darkTheme, setDarkTheme,
         accessToken, setAccessToken,
+        error, setError
     };
-
     return (
         <DefaultContext.Provider value={value}>
             <DynamicWidthComponent navbar={navOpen}>
-                {!loading && (children)}
+                {!loading && (
+                    <>
+                        <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={() => setError(null)}>
+                            <Alert onClose={() => setError(null)} severity="error" sx={{
+                                width: '100%',
+                                marginBottom: '40px',
+                                '@media (max-width:1000px)': { marginBottom: '64px' }
+                            }}
+                            >
+                                {error}
+                            </Alert>
+                        </Snackbar>
+                        {children}
+                    </>
+                )}
             </DynamicWidthComponent>
         </DefaultContext.Provider>
     )

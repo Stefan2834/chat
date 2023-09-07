@@ -36,6 +36,7 @@ export default function Login() {
         if (response?.data?.success) {
             alert(response?.data?.message)
         } else {
+            console.log(response)
             alert(response?.data?.message)
         }
         if (usernameRegisterRef?.current) {
@@ -65,7 +66,7 @@ export default function Login() {
             }, { withCredentials: true })
             if (response?.data?.success) {
                 console.log(response)
-                await axios.post('/api/token', { refreshToken: response.data.refreshToken }).then(data => {
+                await axios.put('/api/token', { refreshToken: response.data.refreshToken }).then(data => {
                     if (data.data.success) {
                         const dbUser = response.data.user
                         setAccessToken(response?.data?.accessToken)

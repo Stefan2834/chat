@@ -2,20 +2,19 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import jwt from 'jsonwebtoken';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-    const accessExpire = '10s'
-    if (req.method === 'GET') {
+    const accessExpire = '10m'
+    if (req.method === 'POST') {
         try {
             const header = req?.headers?.['authorization']
             if (header) {
                 const accessToken: string = header.split(' ')[1]
                 const accessKey: string = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : ''
                 if (accessToken && accessKey) {
-                    jwt.verify(accessToken, accessKey, async (err, user: any) => {
+                    jwt.verify(accessToken, accessKey, async (err: any, user: any) => {
                         if (err) {
                             if (err.name === 'TokenExpiredError') {
-                                const refreshToken = req.cookies.refreshToken
+                                const refreshToken = req.body.refreshToken ? req.body.refreshToken : req.cookies.refreshToken
                                 const refreshKey: string = process.env.REFRESH_TOKEN ? process.env.REFRESH_TOKEN : ''
-                                console.log(refreshKey, refreshToken)
                                 if (refreshToken && refreshKey) {
                                     jwt.verify(refreshToken, refreshKey, async (err: any, user: any) => {
                                         if (err) {
@@ -53,10 +52,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         } catch (err: any) {
             res.json({ success: false, message: err.message, logout: true })
         }
-    } else if (req.method === 'POST') {
+    } else if (req.method === 'PUT') {
         try {
             const { refreshToken } = req.body
-            res.setHeader('Set-Cookie', `refreshToken=${refreshToken}`);
+            res.setHeader('Set-Cookie', [
+                `refreshToken=${refreshToken}; HttpOnly=true; Secure=true; Path=/; Max-Age=60 * 60 * 24 * 7`,
+            ]);
             res.json({ success: true, message: 'Refresh Token saved' })
         } catch (err) {
             res.json({ success: false, message: 'Refresh Token not saved' })

@@ -37,20 +37,15 @@ export default function Sidebar({ className }: { className?: string }) {
         socket,
         sidebar,
         setSidebar,
-        isLoading,
-        error,
-        setError,
+        isLoading,        
         hasMoreData,
         setHasMoreData
     } = useSocket()
-    const { user, server } = useDefault()
+    const { user, server, setError } = useDefault()
     const scrollRef = useRef<HTMLDivElement | null>(null)
     const loading = useRef<boolean>(false)
     const router = useRouter()
 
-    const handleClose = () => {
-        setError(null)
-    }
 
     const handleScroll = useCallback(async () => {
         const container = scrollRef.current;
@@ -120,11 +115,6 @@ export default function Sidebar({ className }: { className?: string }) {
         <Paper elevation={3} className={`w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start ${className} mobile:w-full mobile:mt-16 mobile:h-[calc(100%-64px)] mobile:pb-12`}
             ref={scrollRef}
         >
-            <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="error" sx={{ width: '100%', marginBottom: '40px' }}>
-                    {error}
-                </Alert>
-            </Snackbar>
             <div className='w-[calc(100%+8px)] -m-2 sticky -top-2 -left-2 z-10 bg-white px-2 pt-2'>
                 <TextField id="filled-basic" label="Search..." variant="filled" sx={{ width: '100%' }} />
             </div>

@@ -6,8 +6,6 @@ import { TextField, IconButton, Avatar, Button, Snackbar, Alert, CircularProgres
 import Image from 'next/image';
 import Info from '@/components/messages/info';
 import { parse } from 'cookie';
-import jwt from 'jsonwebtoken';
-import { Suspense } from 'react';
 
 import EmojiPicker from 'emoji-picker-react';
 
@@ -506,18 +504,21 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
    const { email } = context.query;
    const server = process.env.NEXT_PUBLIC_SERVER || ''
 
-
    try {
-
       const cookieHeader = context.req.headers.cookie || '';
       const cookies = parse(cookieHeader);
-      const accessToken = cookies.accessToken || '';
-      const decoded: any = process.env.ACCESS_TOKEN ? jwt.verify(accessToken, process.env.ACCESS_TOKEN, { ignoreExpiration: true }) : 'SALL'
+      const token = cookies.accessToken || '';
+      const response = await axios.post('http://localhost:3000/api/token', {
+         refreshToken: cookies.refreshToken
+      },
+         { headers: { Authorization: `Bearer ${token}` } }
+      )
 
+      const myEmail = response.data.email ? response.data.email : ''
       const messages = await axios.post(`${server}/graphql`, {
          query: query,
          variables: {
-            email: decoded?.email,
+            email: myEmail,
             secondEmail: email,
             jump: 0
          }
@@ -535,19 +536,21 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
                revalidate: 1,
             },
          };
-      } else return {
-         props: {
-            messagesData: [],
-            avatar: '',
-            username: '',
-            hasSeen: false,
-            background: '',
-            params: null,
-            err: messages?.data?.data?.messages?.message
+      } else {
+         return {
+            props: {
+               messagesData: [],
+               avatar: '',
+               username: '',
+               hasSeen: false,
+               background: '',
+               params: null,
+               err: messages?.data?.data?.messages?.message || null
+            }
          }
       }
    } catch (err: any) {
-      console.log(err)
+      console.log(err.message)
       return {
          props: {
             messagesData: [],
@@ -556,7 +559,7 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
             hasSeen: false,
             background: '',
             params: null,
-            err: err.message
+            err: err?.message || ''
          }
       }
    }

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { useDefault } from './Default';
 import io, { Socket } from 'socket.io-client';
-import { useSideData } from '@/customHooks/useSidebar';
+import axios from 'axios'
 import { useRouter } from 'next/router';
 
 interface SocketContextValue {
@@ -25,7 +25,6 @@ interface ConversationType {
     email: string;
 }
 
-
 export const SocketContext = createContext<SocketContextValue | undefined>(undefined);
 
 export function useSocket() {
@@ -37,13 +36,14 @@ export function useSocket() {
 }
 
 export function SocketProvider({ children }: { children: ReactNode }) {
-    const { user, server } = useDefault()
+    const { user, server, accessToken, error, setError } = useDefault()
     const router = useRouter()
     const pathRef = useRef<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true)
     const [socket, setSocket] = useState<Socket | null>(null)
-    const { sidebar, setSidebar, isLoading, error, setError, hasMoreData, setHasMoreData } = useSideData(user?.email || '');
-
+    const [sidebar, setSidebar] = useState<ConversationType[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMoreData, setHasMoreData] = useState(false)
 
 
     useEffect(() => {
@@ -55,9 +55,63 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             transports: ['websocket']
         });
         setSocket(socket)
+
+
+        const fetchSideData = async () => {
+            try {
+                const response = await axios.post(`${server}/graphql`, {
+                    query: `query ($email: String!, $jump: Int!) {
+                                getSidebar(email: $email, jump: $jump) {
+                                success
+                                message
+                                hasMoreData
+                                side {
+                                    username
+                                    lastMsg
+                                    lastYou
+                                    date
+                                    seen
+                                    avatar
+                                    email
+                                }
+                                }
+                            }`,
+                    variables: {
+                        email: user?.email,
+                        jump: 0
+                    }
+                }, { headers: { Authorization: `Bearer ${accessToken}` } })
+                if (response?.data?.data?.getSidebar?.success) {
+                    setSidebar(response?.data?.data?.getSidebar?.side)
+                    setHasMoreData(response.data.data.getSidebar.hasMoreData)
+                } else {
+                    setSidebar([])
+                    console.log(response)
+                    if (!response.data.success) {
+                        setError(response?.data?.message)
+                    } else {
+                        console.error(response?.data?.data?.getSidebar?.message)
+                        setError(response?.data?.data?.getSidebar?.message)
+                    }
+                }
+                console.log(response)
+            } catch (error: any) {
+                console.error('Error fetching side data:', error);
+                setError(`An error occurred while fetching sidebar data. ${error?.message}`);
+                setSidebar([]);
+            } finally {
+                setLoading(false)
+                setIsLoading(false);
+            }
+        };
+
+
         const room = `side-${user?.email}`
         if (user?.email) {
+            fetchSideData();
             socket?.emit('join', { room })
+        } else {
+            setLoading(false)
         }
 
 
@@ -103,8 +157,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             }
         })
 
-        setLoading(false)
-
         return () => {
             socket?.off('sideSeen')
             socket?.off('changeSide')
@@ -114,6 +166,8 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             socket.disconnect();
         };
     }, [user])
+
+
 
 
 
