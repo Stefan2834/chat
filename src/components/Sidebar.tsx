@@ -110,6 +110,7 @@ export default function Sidebar({ className }: { className?: string }) {
         };
     }, [handleScroll]);
 
+
     
 
     return (
