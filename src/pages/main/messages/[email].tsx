@@ -508,7 +508,7 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
       const cookieHeader = context.req.headers.cookie || '';
       const cookies = parse(cookieHeader);
       const token = cookies.accessToken || '';
-      const response = await axios.post(`${process.env.WEBSITE}/api/token`, {
+      const response = await axios.post(`https://chat-drab-nine.vercel.app/api/token`, {
          refreshToken: cookies.refreshToken
       },
          { headers: { Authorization: `Bearer ${token}` } }
