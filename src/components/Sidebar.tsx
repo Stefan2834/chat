@@ -110,6 +110,7 @@ export default function Sidebar({ className }: { className?: string }) {
         };
     }, [handleScroll]);
 
+    
 
     return (
         <Paper elevation={3} className={`w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start ${className} mobile:w-full mobile:mt-16 mobile:h-[calc(100%-64px)] mobile:pb-12`}
