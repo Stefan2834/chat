@@ -1,19 +1,11 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 
 interface DynamicWidthComponentProps {
-    navbar: boolean;
     children: ReactNode;
 }
 
-const DynamicWidthComponent: React.FC<DynamicWidthComponentProps> = ({ navbar, children }) => {
+const DynamicWidthComponent: React.FC<DynamicWidthComponentProps> = ({ children }) => {
     const [phone, setPhone] = useState(true);
-    let padding;
-
-    if (navbar) {
-        padding = '320px';
-    } else {
-        padding = '110px';
-    }
 
     useEffect(() => {
         const handleResize = () => {
@@ -24,7 +16,6 @@ const DynamicWidthComponent: React.FC<DynamicWidthComponentProps> = ({ navbar, c
             }
         };
         
-        // Check if running in the browser before adding the event listener
         if (typeof window !== 'undefined') {
             if(window.innerWidth < 1000) {
                 setPhone(true)
@@ -48,7 +39,7 @@ const DynamicWidthComponent: React.FC<DynamicWidthComponentProps> = ({ navbar, c
                         height: 'auto',
                         overflow: 'hidden',
                         paddingBottom: 0,
-                        paddingLeft: padding,
+                        paddingLeft: '110px',
                         transition: 'padding 400ms ease',
                     }}
                 >

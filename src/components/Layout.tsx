@@ -10,12 +10,14 @@ export const metadata = {
 }
 
 
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+
+
+
 
 
   return (
@@ -30,7 +32,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" />
       </Head>
       <main>
-        {children}
+          {children}
       </main>
     </div>
   )

@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { useDefault } from './Default';
 import io, { Socket } from 'socket.io-client';
-import axios from 'axios'
 import { useRouter } from 'next/router';
+import useAxiosAuth from '@/customHooks/useAxiosAuth';
 
 interface SocketContextValue {
     socket: Socket | null,
@@ -36,13 +36,14 @@ export function useSocket() {
 }
 
 export function SocketProvider({ children }: { children: ReactNode }) {
-    const { user, server, accessToken, error, setError } = useDefault()
+    const { user, server, error, setError } = useDefault()
     const router = useRouter()
+    const axios = useAxiosAuth()
     const pathRef = useRef<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true)
     const [socket, setSocket] = useState<Socket | null>(null)
     const [sidebar, setSidebar] = useState<ConversationType[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [hasMoreData, setHasMoreData] = useState(false)
 
 
@@ -51,10 +52,14 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     }, [router.asPath]);
 
     useEffect(() => {
-        const socket = io(process.env.NEXT_PUBLIC_SERVER || '', {
+
+
+        const socketIo = io(process.env.NEXT_PUBLIC_SERVER || '', {
             transports: ['websocket']
         });
-        setSocket(socket)
+        setSocket(socketIo)
+
+
 
 
         const fetchSideData = async () => {
@@ -80,28 +85,30 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                         email: user?.email,
                         jump: 0
                     }
-                }, { headers: { Authorization: `Bearer ${accessToken}` } })
+                })
+                console.log(response)
                 if (response?.data?.data?.getSidebar?.success) {
                     setSidebar(response?.data?.data?.getSidebar?.side)
                     setHasMoreData(response.data.data.getSidebar.hasMoreData)
                 } else {
                     setSidebar([])
-                    console.log(response)
                     if (!response.data.success) {
                         setError(response?.data?.message)
                     } else {
-                        console.error(response?.data?.data?.getSidebar?.message)
+                        console.log(response?.data?.data?.getSidebar?.message)
                         setError(response?.data?.data?.getSidebar?.message)
                     }
                 }
-                console.log(response)
+                setIsLoading(false);
             } catch (error: any) {
-                console.error('Error fetching side data:', error);
-                setError(`An error occurred while fetching sidebar data. ${error?.message}`);
-                setSidebar([]);
+                if (error.response.data.message !== "Invalid token") {
+                    console.log('Error fetching side data:', error);
+                    setError(`An error occurred while fetching sidebar data. ${error?.message}`);
+                    setSidebar([]);
+                    setIsLoading(false)
+                }
             } finally {
                 setLoading(false)
-                setIsLoading(false);
             }
         };
 
@@ -117,8 +124,11 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
         socket?.on('changeSide', (newSidebar) => {
             setSidebar(s => {
-                const updatedSidebar = s?.map((side: any) => {
-                    if (side.email === newSidebar.side.email) {
+                let found: number = 0;
+                console.log(newSidebar)
+                let updatedSidebar = s?.map((side: any) => {
+                    if (side?.email === newSidebar?.side?.email) {
+                        found = 1;
                         return {
                             ...newSidebar.side,
                             lastYou: newSidebar?.sender === user?.email,
@@ -126,6 +136,13 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                         };
                     } else return side;
                 });
+                if(found === 0) { 
+                    updatedSidebar = [{
+                        ...newSidebar.side,
+                        lastYou: newSidebar.sender === user?.email,
+                        seen: newSidebar?.sender === user?.email,
+                    }, ...updatedSidebar]
+                }
                 updatedSidebar?.sort((a, b) => b.date - a.date);
                 return updatedSidebar;
             })
@@ -163,7 +180,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             if (user?.email) {
                 socket?.emit('leave', { room })
             }
-            socket.disconnect();
+            socket?.disconnect();
         };
     }, [user])
 

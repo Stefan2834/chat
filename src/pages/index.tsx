@@ -1,101 +1,79 @@
-import React, { useEffect, useRef } from 'react'
-import axios from 'axios'
-
-import { TextField, Button, setRef } from '@mui/material'
+import React, { useState } from 'react'
 import { useDefault } from '@/contexts/Default'
 import { useRouter } from 'next/router'
+import { TextField, Button } from '@mui/material'
+import axios from 'axios'
+import { signIn } from 'next-auth/react'
+
 
 
 export default function Login() {
-    const { server, setUser, setAccessToken } = useDefault()
+    const { server, setError } = useDefault()
     const router = useRouter()
-    const usernameRegisterRef = useRef<HTMLInputElement>(null)
-    const emailRegisterRef = useRef<HTMLInputElement>(null)
-    const passRegisterRef = useRef<HTMLInputElement>(null)
-    const confirmPassRegisterRef = useRef<HTMLInputElement>(null)
-    const usernameLoginRef = useRef<HTMLInputElement>(null)
-    const emailLoginRef = useRef<HTMLInputElement>(null)
-    const passLoginRef = useRef<HTMLInputElement>(null)
+    const [login, setLogin] = useState({
+        email: '',
+        pass: '',
+        username: '',
+    })
+    const [register, setRegister] = useState({
+        email: '',
+        pass: '',
+        confirmPass: '',
+        username: ''
+    })
 
 
     const handleRegister = async () => {
-        const username = usernameRegisterRef?.current?.value || null
-        const email = emailRegisterRef?.current?.value || null
-        const pass = passRegisterRef?.current?.value || null
-        const confirmPass = confirmPassRegisterRef?.current?.value
-        if (confirmPass !== pass) {
-            alert("Password don't match")
-            return
+        const { username, email, pass, confirmPass } = register
+        try {
+            if (confirmPass !== pass) {
+                setError("Password don't match")
+                return
+            }
+            const response = await axios.post(`${server}/login/register`, {
+                username: username,
+                password: pass,
+                email: email,
+                avatar: ''
+            })
+            if (!response?.data?.success) {
+                console.log(response)
+                setError(response?.data?.message)
+            } else {
+                alert('User register succesfully')
+            }
+        } catch (err: any) {
+            console.log(err)
+            setError(err.message)
         }
-        const response = await axios.post(`${server}/login/register`, {
-            username: username,
-            password: pass,
-            email: email,
-            avatar: ''
-        }, { withCredentials: true })
-        if (response?.data?.success) {
-            alert(response?.data?.message)
-        } else {
-            console.log(response)
-            alert(response?.data?.message)
-        }
-        if (usernameRegisterRef?.current) {
-            usernameRegisterRef.current.value = '';
-        }
-        if (emailRegisterRef?.current) {
-            emailRegisterRef.current.value = '';
-        }
-        if (passRegisterRef?.current) {
-            passRegisterRef.current.value = '';
-        }
-        if (confirmPassRegisterRef?.current) {
-            confirmPassRegisterRef.current.value = '';
-        }
-
     }
 
     const handleLogin = async () => {
         try {
-            const username = usernameLoginRef?.current?.value || null
-            const pass = passLoginRef?.current?.value || null
-            const email = emailLoginRef?.current?.value || null
+            const { username, pass, email } = login
             const response = await axios.post(`${server}/login/login`, {
                 username: username,
                 password: pass,
                 email: email
-            }, { withCredentials: true })
-            if (response?.data?.success) {
+            })
+            if (!response?.data?.success) {
                 console.log(response)
-                await axios.put('/api/token', { refreshToken: response.data.refreshToken }).then(data => {
-                    if (data.data.success) {
-                        const dbUser = response.data.user
-                        setAccessToken(response?.data?.accessToken)
-                        setUser({
-                            email: dbUser.email,
-                            username: dbUser.username,
-                            avatar: dbUser.avatar
-                        })
-                        router.push('/main/home')
-                    } else alert('Unable to save the login information. Try again')
-                })
+                setError(response?.data?.message)
             } else {
-                console.log(response)
-                alert(response?.data?.message)
+                await signIn('credentials', {
+                    username,
+                    email
+                });
+                setLogin({
+                    email: '',
+                    pass: '',
+                    username: '',
+                })
             }
-            if (usernameLoginRef?.current) {
-                usernameLoginRef.current.value = '';
-            }
-            if (emailLoginRef?.current) {
-                emailLoginRef.current.value = '';
-            }
-            if (passLoginRef?.current) {
-                passLoginRef.current.value = '';
-            }
-        } catch (err) {
+        } catch (err: any) {
             console.log(err)
+            setError(err.message)
         }
-
-
     }
 
     return (
@@ -105,19 +83,19 @@ export default function Login() {
                     <div className='font-semibold text-md'>Register</div>
                     <TextField id="filled-basic" label="Email" variant="filled"
                         sx={{ my: 2 }} required type='email'
-                        inputRef={emailRegisterRef}
+                        onChange={(e) => setRegister({ ...register, email: e.target.value })}
                     />
                     <TextField id="filled-basic" label="Username" variant="filled"
                         sx={{ my: 2 }} required
-                        inputRef={usernameRegisterRef}
+                        onChange={(e) => setRegister({ ...register, username: e.target.value })}
                     />
                     <TextField id="filled-basic" label="Password" variant="filled" type='password'
                         sx={{ my: 2 }} required
-                        inputRef={passRegisterRef}
+                        onChange={(e) => setRegister({ ...register, pass: e.target.value })}
                     />
                     <TextField id="filled-basic" label="Confirm Password" variant="filled" type='password'
                         sx={{ my: 2 }} required
-                        inputRef={confirmPassRegisterRef}
+                        onChange={(e) => setRegister({ ...register, confirmPass: e.target.value })}
                     />
                     <Button type='submit' variant="outlined">Register</Button>
                 </form>
@@ -125,15 +103,15 @@ export default function Login() {
                     <div className='font-semibold text-md'>Login</div>
                     <TextField id="filled-basic" label="Email" variant="filled"
                         sx={{ my: 2 }} required type='email'
-                        inputRef={emailLoginRef}
+                        onChange={(e) => setLogin({ ...login, email: e.target.value })}
                     />
                     <TextField id="filled-basic" label="Username" variant="filled"
                         sx={{ my: 2 }} required
-                        inputRef={usernameLoginRef}
+                        onChange={(e) => setLogin({ ...login, username: e.target.value })}
                     />
                     <TextField id="filled-basic" label="Password" variant="filled" type='password'
                         sx={{ my: 2 }} required
-                        inputRef={passLoginRef}
+                        onChange={(e) => setLogin({ ...login, pass: e.target.value })}
                     />
                     <Button type='submit' variant="outlined">Login</Button>
                 </form>

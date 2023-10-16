@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Button, CircularProgress } from '@mui/material'
-import axios from 'axios'
-
+import useAxiosAuth from '@/customHooks/useAxiosAuth'
 
 interface CompType {
   activeBg: string,
@@ -16,6 +15,7 @@ export default function Info({ activeBg, setBg, setInfo, setError, email, emailS
 
   const [newBg, setNewBg] = useState<string>(activeBg)
   const [loading, setLoading] = useState(false)
+  const axios = useAxiosAuth()
 
   const bgAvailable: string[] = [
     'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg',

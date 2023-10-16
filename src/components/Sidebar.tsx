@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Avatar, Button, Paper, TextField, Skeleton, Alert, Snackbar, CircularProgress, Backdrop } from '@mui/material';
 import { useRouter } from 'next/router';
-import axios from 'axios';
+import useAxiosAuth from '@/customHooks/useAxiosAuth';
 import { useSocket } from '@/contexts/Socket';
 import { useDefault } from '@/contexts/Default';
+import Link from 'next/link';
 
 function formatTimeAgo(timestamp: number) {
     const now = Date.now();
@@ -34,22 +35,23 @@ function formatTimeAgo(timestamp: number) {
 
 export default function Sidebar({ className }: { className?: string }) {
     const {
-        socket,
         sidebar,
         setSidebar,
-        isLoading,        
+        isLoading,
         hasMoreData,
         setHasMoreData
     } = useSocket()
+    const axios = useAxiosAuth()
     const { user, server, setError } = useDefault()
     const scrollRef = useRef<HTMLDivElement | null>(null)
     const loading = useRef<boolean>(false)
+    const [email, setEmail] = useState("")
     const router = useRouter()
 
 
     const handleScroll = useCallback(async () => {
         const container = scrollRef.current;
-        if (container && !loading.current && hasMoreData) {
+        if (container && !loading.current && hasMoreData && user?.email) {
             const { scrollTop, scrollHeight, clientHeight } = container;
             if (scrollTop + clientHeight >= scrollHeight - 250) {
                 loading.current = true
@@ -110,23 +112,24 @@ export default function Sidebar({ className }: { className?: string }) {
         };
     }, [handleScroll]);
 
+    const handleSubmit = () => {
+        router.push(`/main/messages/${email}`)
+    }
 
-    
+
+
 
     return (
         <Paper elevation={3} className={`w-96 p-2 fixed h-full z-10 overflow-y-scroll flex flex-col items-center justify-start ${className} mobile:w-full mobile:mt-16 mobile:h-[calc(100%-64px)] mobile:pb-12`}
             ref={scrollRef}
         >
-            <div className='w-[calc(100%+8px)] -m-2 sticky -top-2 -left-2 z-10 bg-white px-2 pt-2'>
-                <TextField id="filled-basic" label="Search..." variant="filled" sx={{ width: '100%' }} />
-            </div>
             {!isLoading && (
                 <>
                     {sidebar?.length !== 0 ? sidebar?.map((conv: any, index: number) => {
                         const font = !conv.seen && !conv.lastYou ? 'font-semibold' : 'font-medium'
                         return (
-                            <Button key={index} onClick={() => router.push(`/main/messages/${conv?.email}`)} variant='text'
-                                sx={{ width: '100%', textTransform: "none", height: '80px', margin: '16px 0', justifyContent: "flex-start", display: "flex", alignItems: "center" }}
+                            <Link href={`/main/messages/${conv?.email}`} key={index}
+                                style={{ width: '100%', textTransform: "none", height: '80px', margin: '16px 0', justifyContent: "flex-start", display: "flex", alignItems: "center" }}
                             >
                                 <Avatar src={conv?.avatar} sx={{ height: "50px", width: "50px" }} />
                                 <div className='w-full h-full flex-col flex items-start justify-center ml-2 text-black'>
@@ -142,12 +145,21 @@ export default function Sidebar({ className }: { className?: string }) {
                                         </div>
                                     </div>
                                 </div>
-                            </Button>
+                            </Link>
                         )
                     }) : (
-                        <div className='flex flex-col w-full h-full items-center justify-center'>
-                            <div className='font-semibold text-md text-center mb-2'>You don't have any active conversation</div>
-                            <Button onClick={() => router.push('/main/users')} variant="contained" sx={{ textTransform: "none", fontSize: '18px' }}>Find somebody to talk with</Button>
+                        <div className='w-full h-full flex items-center justify-center flex-col'>
+                            <div className='text-lg font-semibold mb-4'>
+                                Find a user to talk with:
+                            </div>
+                            <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} className='flex items-center justify-center flex-col w-full'>
+                                <TextField id="filled-basic" label="Email..." variant="filled" sx={{ width: '100%' }}
+                                    value={email}
+                                    type='email'
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                                <Button type='submit'>Enter</Button>
+                            </form>
                         </div>
                     )}
                 </>
