@@ -32,6 +32,7 @@ export const authOptions: NextAuthOptions = {
     ],
     pages: {
         signIn: '/',
+        error: '/'
     },
     jwt: {
         secret: process.env.ACCESS_TOKEN,
