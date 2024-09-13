@@ -51,39 +51,4 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
-router.post('/token', async (req, res) => {
-    const { username, email } = req.body
-    try {
-        const accessToken = jwt.sign({ username, email }, process.env.ACCESS_TOKEN, { expiresIn: accessExpire })
-        const refreshToken = jwt.sign({ username, email }, process.env.REFRESH_TOKEN)
-        res.json({ success: true, accessToken, refreshToken })
-    } catch (err) {
-        console.log(err)
-        res.json({ success: false, message: err.message })
-    }
-})
-
-router.post('/refresh', async (req, res) => {
-    const { refreshToken } = req.body
-    try {
-        jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, user) => {
-            if (err) {
-                return res.json({ success: false, message: 'Invalid refresh Token' })
-            } else {
-                const accessToken = jwt.sign({
-                    username: user.username,
-                    email: user.email
-                }, process.env.ACCESS_TOKEN, {
-                    expiresIn: accessExpire
-                })
-                res.json({success:true, accessToken})
-            }
-        })
-    } catch (err) {
-        console.log(err)
-        res.json({ success: false, message: err.message })
-    }
-})
-
 module.exports = router;

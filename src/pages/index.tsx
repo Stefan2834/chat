@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useDefault } from '@/contexts/Default'
-import { useRouter } from 'next/router'
 import { TextField, Button } from '@mui/material'
 import axios from 'axios'
 import { signIn } from 'next-auth/react'
@@ -9,7 +8,6 @@ import { signIn } from 'next-auth/react'
 
 export default function Login() {
     const { server, setError } = useDefault()
-    const router = useRouter()
     const [login, setLogin] = useState({
         email: '',
         pass: '',
@@ -40,7 +38,7 @@ export default function Login() {
                 console.log(response)
                 setError(response?.data?.message)
             } else {
-                alert('User register succesfully')
+                alert('User register successfully')
             }
         } catch (err: any) {
             console.log(err)

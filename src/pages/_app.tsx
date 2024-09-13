@@ -6,7 +6,7 @@ import { SocketProvider } from "@/contexts/Socket";
 import Navbar from "@/components/Navbar";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { useRouter } from "next/router";
-import '../app/globals.css'
+import "../css/globals.css"
 import { SessionProvider } from 'next-auth/react';
 
 interface AppProps {

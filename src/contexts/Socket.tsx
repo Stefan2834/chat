@@ -1,50 +1,60 @@
-import React, { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
-import { useDefault } from './Default';
+//& Utilities
+import React, { useContext, useEffect, useState, useRef, createContext, ReactNode } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { useRouter } from 'next/router';
-import useAxiosAuth from '@/customHooks/useAxiosAuth';
+import axios from "axios"
 
-interface SocketContextValue {
-    socket: Socket | null,
-    sidebar: ConversationType[];
-    setSidebar: React.Dispatch<React.SetStateAction<ConversationType[]>>;
-    isLoading: boolean;
-    error: string | null;
-    setError: (error: string | null) => void;
-    hasMoreData: boolean;
-    setHasMoreData: (hasMoreData: boolean) => void;
-}
+//& Context
+import { useDefault } from './Default';
 
-interface ConversationType {
-    username: string;
-    lastMsg: string;
-    lastYou: boolean;
-    date: number;
-    seen: boolean;
-    avatar: string;
-    email: string;
-}
+//& Interfaces
+import { ConversationType, SocketContextValue } from '@/exports/interfaces';
+
+const socketIo = io(process.env.NEXT_PUBLIC_SERVER || '', {
+    transports: ['websocket']
+});
+
+
+const query = `query ($email: String!, $jump: Int!) {
+    getSidebar(email: $email, jump: $jump) {
+    success
+    message
+    hasMoreData
+    side {
+        username
+        lastMsg
+        lastYou
+        date
+        seen
+        avatar
+        email
+        }
+    }
+}`;
 
 export const SocketContext = createContext<SocketContextValue | undefined>(undefined);
 
 export function useSocket() {
     const context = useContext(SocketContext);
     if (!context) {
-        throw new Error('useDefault must be used within an DefaultProvider');
+        throw new Error('useSocket must be used within an DefaultProvider');
     }
     return context;
 }
 
 export function SocketProvider({ children }: { children: ReactNode }) {
-    const { user, server, error, setError } = useDefault()
-    const router = useRouter()
-    const axios = useAxiosAuth()
-    const pathRef = useRef<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true)
+
+    const { user, server, setError } = useDefault()
+
     const [socket, setSocket] = useState<Socket | null>(null)
+    const [loading, setLoading] = useState<boolean>(true)
     const [sidebar, setSidebar] = useState<ConversationType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [hasMoreData, setHasMoreData] = useState(false)
+
+    const pathRef = useRef<string | null>(null);
+
+    const router = useRouter()
 
 
     useEffect(() => {
@@ -53,41 +63,19 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
 
-
-        const socketIo = io(process.env.NEXT_PUBLIC_SERVER || '', {
-            transports: ['websocket']
-        });
         setSocket(socketIo)
-
-
-
 
         const fetchSideData = async () => {
             try {
                 const response = await axios.post(`${server}/graphql`, {
-                    query: `query ($email: String!, $jump: Int!) {
-                                getSidebar(email: $email, jump: $jump) {
-                                success
-                                message
-                                hasMoreData
-                                side {
-                                    username
-                                    lastMsg
-                                    lastYou
-                                    date
-                                    seen
-                                    avatar
-                                    email
-                                }
-                                }
-                            }`,
+                    query: query,
                     variables: {
                         email: user?.email,
                         jump: 0
                     }
                 })
-                console.log(response)
                 if (response?.data?.data?.getSidebar?.success) {
+                    console.log(response.data.data.getSidebar)
                     setSidebar(response?.data?.data?.getSidebar?.side)
                     setHasMoreData(response.data.data.getSidebar.hasMoreData)
                 } else {
@@ -99,30 +87,16 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                         setError(response?.data?.data?.getSidebar?.message)
                     }
                 }
-                setIsLoading(false);
             } catch (error: any) {
-                if (error.response.data.message !== "Invalid token") {
-                    console.log('Error fetching side data:', error);
-                    setError(`An error occurred while fetching sidebar data. ${error?.message}`);
-                    setSidebar([]);
-                    setIsLoading(false)
-                }
+                console.log('Error fetching side data:', error);
+                setError(`An error occurred while fetching sidebar data. ${error?.message}`);
+                setSidebar([]);
             } finally {
-                setLoading(false)
+                setIsLoading(false)
             }
         };
 
-
-        const room = `side-${user?.email}`
-        if (user?.email) {
-            fetchSideData();
-            socket?.emit('join', { room })
-        } else {
-            setLoading(false)
-        }
-
-
-        socket?.on('changeSide', (newSidebar) => {
+        const handleSocketChangeSide = (newSidebar: any) => {
             setSidebar(s => {
                 let found: number = 0;
                 console.log(newSidebar)
@@ -136,7 +110,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                         };
                     } else return side;
                 });
-                if(found === 0) { 
+                if (found === 0) {
                     updatedSidebar = [{
                         ...newSidebar.side,
                         lastYou: newSidebar.sender === user?.email,
@@ -146,9 +120,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                 updatedSidebar?.sort((a, b) => b.date - a.date);
                 return updatedSidebar;
             })
-        });
+        }
 
-        socket?.on('sideSeen', (data) => {
+        const handleSocketSideSeen = (data: any) => {
             if (data.success) {
                 setSidebar(s => s.map((side) => {
                     if (side.email === data.email) {
@@ -156,9 +130,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                     } else return side
                 }))
             }
-        })
+        }
 
-        socket?.on('notification', data => {
+        const handleSocketNotification = (data: any) => {
             if (data.success) {
                 const mess = data.message
                 if (Notification.permission === 'granted') {
@@ -172,17 +146,34 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                     }
                 }
             }
-        })
+        }
+
+
+        const room = `side-${user?.email}`
+        if (user?.email) {
+            fetchSideData();
+            socket?.emit('join', { room })
+        } else {
+            setLoading(false)
+        }
+
+
+        socket?.on('changeSide', handleSocketChangeSide);
+
+        socket?.on('sideSeen', handleSocketSideSeen);
+
+        socket?.on('notification', handleSocketNotification);
 
         return () => {
             socket?.off('sideSeen')
             socket?.off('changeSide')
+            socket?.off('notification')
             if (user?.email) {
                 socket?.emit('leave', { room })
             }
             socket?.disconnect();
         };
-    }, [user])
+    }, [user, socket])
 
 
 
@@ -191,7 +182,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
     const value: SocketContextValue = {
         socket,
-        sidebar, setSidebar, isLoading, error, setError, hasMoreData, setHasMoreData
+        sidebar, setSidebar,
+        hasMoreData, setHasMoreData,
+        isLoading
     };
 
     return (

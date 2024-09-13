@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import styles from './Navbar.module.css'
+import styles from "../css/Navbar.module.css"
 import { useDefault } from '@/contexts/Default';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/router';

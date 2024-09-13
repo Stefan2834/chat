@@ -1,24 +1,15 @@
-import React, { createContext, useContext, useEffect, useState, useReducer, ReactNode } from 'react';
-import DynamicWidthComponent from '@/components/DynamicWidth';
-import { Snackbar, Alert } from '@mui/material';
+//& Utilities
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useSession } from 'next-auth/react';
-import Protected from '@/components/Protected';
 
-interface DefaultContextValue {
-    state: State;
-    dispatch: Dispatch;
-    server: String;
-    user: User | null;
-    setUser: (user: User | null) => void,
-    error: null | string,
-    setError: (error: null | string) => void
-}
-type Action = { type: 'test'; payload: { number: number } };
-type Dispatch = (action: Action) => void;
-export type State = {
-    number: number;
-};
-type ReducerFunction = (state: State, action: Action) => State;
+//& Interfaces
+import { DefaultContextValue, User } from '@/exports/interfaces';
+
+//& Custom Components
+import Protected from '@/components/Protected';
+import DynamicWidthComponent from '@/components/DynamicWidth';
+import CustomError from '@/components/custom/CustomError';
+
 
 export const DefaultContext = createContext<DefaultContextValue | undefined>(undefined);
 
@@ -30,33 +21,16 @@ export function useDefault() {
     return context;
 }
 
-function Reducer(state: State, action: Action): State {
-    switch (action.type) {
-        case 'test':
-            return { ...state, number: action.payload.number };
-        default:
-            return state;
-    }
-}
 
-interface DefaultProviderProps {
-    children: ReactNode;
-}
+export function DefaultProvider({ children }: { children: ReactNode }) {
 
-type User = {
-    email: string | null,
-    username: string | null,
-    avatar: string | null
-}
-
-export function DefaultProvider({ children }: DefaultProviderProps) {
-    const initialState: State = { number: 0 }
     const { data: session, status } = useSession()
-    const [state, dispatch] = useReducer<ReducerFunction>(Reducer, initialState);
+
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true)
-    const [error, setError] = useState<null | string>(null)
-    const server: String = process.env.NEXT_PUBLIC_SERVER || ''
+    const [error, setError] = useState<string | null>(null)
+
+    const server: string = process.env.NEXT_PUBLIC_SERVER || ''
 
 
     useEffect(() => {
@@ -66,36 +40,25 @@ export function DefaultProvider({ children }: DefaultProviderProps) {
             setUser({
                 username: session.user?.username || null,
                 email: session.user?.email || null,
-                avatar: session?.user?.image || null
+                avatar: session?.user?.avatar || null
             })
-            setLoading(false)
         }
-    }, [status])
+    }, [session])
 
 
     const value: DefaultContextValue = {
-        state,
-        dispatch,
         server,
         user, setUser,
         error, setError
     };
+
     return (
         <DefaultContext.Provider value={value}>
             <DynamicWidthComponent>
                 <Protected>
                     {!loading && (
                         <>
-                            <Snackbar open={error !== null ? true : false} autoHideDuration={5000} onClose={() => setError(null)}>
-                                <Alert onClose={() => setError(null)} severity="error" sx={{
-                                    width: '100%',
-                                    marginBottom: '40px',
-                                    '@media (max-width:1000px)': { marginBottom: '64px' }
-                                }}
-                                >
-                                    {error}
-                                </Alert>
-                            </Snackbar>
+                            <CustomError />
                             {children}
                         </>
                     )}

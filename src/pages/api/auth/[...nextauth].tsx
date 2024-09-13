@@ -1,6 +1,5 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
-import axios from "axios";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -13,16 +12,10 @@ export const authOptions: NextAuthOptions = {
                 password: { label: 'Password', type: 'password' },
             },
             async authorize(credentials: any, req: any) {
-                const user = await axios.post(`${process.env.NEXT_PUBLIC_SERVER}/login/token`, {
-                    username: credentials.username,
-                    email: credentials.email
-                })
-                if (user.data.success) {
+                if (credentials) {
                     return {
                         username: credentials.username,
                         email: credentials.email,
-                        accessToken: user.data.accessToken,
-                        refreshToken: user.data.refreshToken
                     }
                 } else {
                     return req
@@ -45,9 +38,6 @@ export const authOptions: NextAuthOptions = {
             return { ...token, ...user };
         },
         async session({ session, token }) {
-            if (token.accessToken) {
-                session.user = token as any;
-            }
             return session;
         },
     },

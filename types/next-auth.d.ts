@@ -5,9 +5,7 @@ declare module "next-auth" {
         user: {
             username: string,
             email: string,
-            image: string,
-            accessToken: string,
-            refreshToken: string
+            avatar: string,
         }
     }
 }

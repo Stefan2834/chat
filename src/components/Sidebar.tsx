@@ -1,37 +1,13 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Avatar, Button, Paper, TextField, Skeleton, Alert, Snackbar, CircularProgress, Backdrop } from '@mui/material';
 import { useRouter } from 'next/router';
-import useAxiosAuth from '@/customHooks/useAxiosAuth';
 import { useSocket } from '@/contexts/Socket';
 import { useDefault } from '@/contexts/Default';
 import Link from 'next/link';
+import axios from "axios"
 
-function formatTimeAgo(timestamp: number) {
-    const now = Date.now();
-    const diffInSeconds = Math.floor((now - timestamp) / 1000);
+import { formatTimeAgo } from '@/exports/utilities';
 
-    if (diffInSeconds < 60) {
-        return 'now';
-    } else if (diffInSeconds < 3600) {
-        const minutes = Math.floor(diffInSeconds / 60);
-        return `${minutes}m`;
-    } else if (diffInSeconds < 86400) {
-        const hours = Math.floor(diffInSeconds / 3600);
-        return `${hours}h`;
-    } else if (diffInSeconds < 604800) {
-        const days = Math.floor(diffInSeconds / 86400);
-        return `${days}d`;
-    } else if (diffInSeconds < 2419200) {
-        const weeks = Math.floor(diffInSeconds / 604800);
-        return `${weeks}w`;
-    } else if (diffInSeconds < 29030400) {
-        const months = Math.floor(diffInSeconds / 2419200);
-        return `${months}mo`;
-    } else {
-        const years = Math.floor(diffInSeconds / 29030400);
-        return `${years}y`;
-    }
-}
 
 export default function Sidebar({ className }: { className?: string }) {
     const {
@@ -41,7 +17,6 @@ export default function Sidebar({ className }: { className?: string }) {
         hasMoreData,
         setHasMoreData
     } = useSocket()
-    const axios = useAxiosAuth()
     const { user, server, setError } = useDefault()
     const scrollRef = useRef<HTMLDivElement | null>(null)
     const loading = useRef<boolean>(false)
