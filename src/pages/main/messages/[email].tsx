@@ -32,28 +32,6 @@ import { useDefault } from '@/contexts/Default';
 import { MessagePageProps } from '@/exports/types';
 
 
-const query = `query ($email: String!, $secondEmail: String!, $jump: Int!) {
-   messages: getMessages(email: $email, secondEmail: $secondEmail, jump: $jump) {
-      success
-      message
-      avatar
-      username
-      hasMoreData
-      seen
-      bg
-      messages {
-         message
-         date
-         email
-         photo
-      }
-   }
-}`
-
-
-
-
-
 export default function Messages({ messagesData, avatar, params, username, hasSeen, err, background }: MessagePageProps) {
 
     const router = useRouter()
@@ -86,29 +64,23 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                 loading.current = true
                 try {
                     const response = await axios.post(`${server}/graphql`, {
-                        query: query,
-                        variables: {
-                            email: user?.email,
-                            secondEmail: params,
-                            jump: messages?.length
-                        }
+                        email: user?.email,
+                        secondEmail: params,
+                        jump: messages?.length
                     })
-                    if (response?.data?.data?.messages?.success) {
+                    if (response?.data?.success) {
                         setMessages(prevMessages => [
                             ...prevMessages,
-                            ...(response?.data?.data?.messages?.messages || [])
+                            ...(response?.data?.messages || [])
                         ]);
-                        setHasMoreData(response?.data?.data?.messages?.hasMoreData)
+                        setHasMoreData(response?.data?.hasMoreData)
                     } else {
-                        console.error(response?.data?.data?.messages?.message)
-                        setError(response?.data?.data?.messages?.message);
+                        console.error(response?.data?.error)
+                        setError(response?.data?.error);
                     }
                 } catch (error: any) {
-                    console.log(error)
-                    if (error.response.data.message !== "Invalid token") {
-                        console.error('Error fetching side data:', error);
-                        setMessages([])
-                    }
+                    console.error('Error fetching side data:', error);
+                    setError(error.message as string);
                 } finally {
                     loading.current = false
                 }
@@ -427,22 +399,19 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
         const session = await getSession(context);
 
 
-        const messages = await axios.post(`${server}/graphql`, {
-            query: query,
-            variables: {
-                email: session?.user?.email,
-                secondEmail: email,
-                jump: 0
-            }
+        const messages = await axios.post(`${server}/messages`, {
+            email: session?.user?.email,
+            secondEmail: email,
+            jump: 0
         })
-        if (messages?.data?.data?.messages?.success) {
+        if (messages?.data?.success) {
             return {
                 props: {
-                    messagesData: messages?.data?.data?.messages?.messages || [],
-                    avatar: messages?.data?.data?.messages?.avatar || '',
-                    username: messages?.data?.data?.messages?.username || '',
-                    hasSeen: messages?.data?.data?.messages?.seen || false,
-                    background: messages?.data?.data?.messages?.bg || 'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg',
+                    messagesData: messages?.data?.messages || [],
+                    avatar: messages?.data?.avatar || '',
+                    username: messages?.data?.username || '',
+                    hasSeen: messages?.data?.seen || false,
+                    background: messages?.data?.bg || 'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg',
                     params: email as string,
                     err: null,
                 },
@@ -456,7 +425,7 @@ export const getServerSideProps: GetServerSideProps<MessagePageProps> = async (c
                     hasSeen: false,
                     background: '',
                     params: null,
-                    err: messages?.data?.data?.messages?.message || null
+                    err: messages?.data?.error || null
                 }
             }
         }
