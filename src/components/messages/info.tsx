@@ -6,7 +6,7 @@ import axios from 'axios'
 import { Button, CircularProgress } from '@mui/material'
 
 //& Exports
-import { CompType } from '@/exports/interfaces'
+import { CompType } from '@/exports/types'
 import { bgAvailable } from '@/exports/utilities'
 
 export default function Info({ activeBg, setBg, setInfo, setError, email, emailSend }: CompType) {

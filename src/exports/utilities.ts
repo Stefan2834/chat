@@ -47,14 +47,18 @@ export function formatTimeAgo(timestamp: number) {
 }
 
 
+import image1 from "../assets/backgrounds/background-1.webp"
+import image2 from "../assets/backgrounds/background-2.webp"
+import image3 from "../assets/backgrounds/background-3.webp"
+import image4 from "../assets/backgrounds/background-4.webp"
+import image5 from "../assets/backgrounds/background-5.jpg"
+import image6 from "../assets/backgrounds/background-6.jpg"
+import image7 from "../assets/backgrounds/background-7.png"
+import image8 from "../assets/backgrounds/background-8.jpg"
+
+
 export const bgAvailable = [
-    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p1.jpg',
-    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p2.jpg',
-    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p3.jpg',
-    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p4.webp',
-    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p5.jpg',
-    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p6.jpg',
-    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p7.jpg',
-    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p8.jpg',
-    'https://chatapp2834.s3.eu-west-3.amazonaws.com/p9.jpg',
+    image1.src, image2.src, image3.src,
+    image4.src, image5.src, image6.src,
+    image7.src, image8.src
 ]

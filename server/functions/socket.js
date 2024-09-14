@@ -1,5 +1,7 @@
 const { Messages } = require('../routes/Schema.js');
 
+const { io } = require('../bin/www.js')
+
 const handleSocketMessage = async (data) => {
     try {
         let message = {
@@ -84,7 +86,7 @@ const handleSocketMessage = async (data) => {
     } catch (err) {
         console.log(err)
         io.to(data?.room).emit('message', { success: false, message: err.message })
-        io.to(`side-${data?.emailReceive}`).emit('notification', { success: true, message: err.message });
+        io.to(`side-${data?.emailReceive}`).emit('notification', { success: false, message: err.message });
         io.to(`side-${data?.emailSend}`).emit('changeSide', { success: false, message: err.message })
         io.to(`side-${data?.emailReceive}`).emit('changeSide', { success: false, message: err.message })
     }

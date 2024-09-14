@@ -16,6 +16,7 @@ export const authOptions: NextAuthOptions = {
                     return {
                         username: credentials.username,
                         email: credentials.email,
+                        avatar: "empty"  
                     }
                 } else {
                     return req
@@ -39,6 +40,10 @@ export const authOptions: NextAuthOptions = {
         },
         async session({ session, token }) {
             return session;
+        },
+        async signIn({ user }) {
+            console.log("User:", user.email, "Successfully logged in");
+            return true;
         },
     },
 }

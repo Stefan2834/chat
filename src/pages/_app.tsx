@@ -2,7 +2,6 @@ import React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Layout from "@/components/Layout";
 import { DefaultProvider } from "@/contexts/Default";
-import { SocketProvider } from "@/contexts/Socket";
 import Navbar from "@/components/Navbar";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { useRouter } from "next/router";
@@ -34,7 +33,6 @@ export default function App({ Component, pageProps: { session, ...pageProps }, }
         <ThemeProvider theme={theme}>
             <SessionProvider session={session}>
                 <DefaultProvider>
-                    <SocketProvider>
                         <Navbar />
                         <Layout>
                             {shouldTransition ? (
@@ -65,7 +63,6 @@ export default function App({ Component, pageProps: { session, ...pageProps }, }
                                 <Component {...pageProps} />
                             )}
                         </Layout>
-                    </SocketProvider>
                 </DefaultProvider>
             </SessionProvider>
         </ThemeProvider>

@@ -1,9 +1,15 @@
 //& Utilities
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { useContext, useState, ReactNode, createContext, } from 'react';
 import { useSession } from 'next-auth/react';
+import io, { Socket } from 'socket.io-client';
+
+const socketIo = io(process.env.NEXT_PUBLIC_SERVER || '', {
+    transports: ['websocket']
+});
+
 
 //& Interfaces
-import { DefaultContextValue, User } from '@/exports/interfaces';
+import { DefaultContextValue } from '@/exports/types';
 
 //& Custom Components
 import Protected from '@/components/Protected';
@@ -24,31 +30,20 @@ export function useDefault() {
 
 export function DefaultProvider({ children }: { children: ReactNode }) {
 
-    const { data: session, status } = useSession()
-
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState<boolean>(true)
-    const [error, setError] = useState<string | null>(null)
-
+    const { status } = useSession()
+    
+    const socket: Socket = socketIo;
     const server: string = process.env.NEXT_PUBLIC_SERVER || ''
+    
+    const [error, setError] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(true);
 
-
-    useEffect(() => {
-        setLoading(false)
-        if (status === "authenticated") {
-            console.log(session)
-            setUser({
-                username: session.user?.username || null,
-                email: session.user?.email || null,
-                avatar: session?.user?.avatar || null
-            })
-        }
-    }, [session])
-
-
+    
+    
     const value: DefaultContextValue = {
+        socket,
         server,
-        user, setUser,
+        isLoading, setIsLoading,
         error, setError
     };
 
@@ -56,7 +51,7 @@ export function DefaultProvider({ children }: { children: ReactNode }) {
         <DefaultContext.Provider value={value}>
             <DynamicWidthComponent>
                 <Protected>
-                    {!loading && (
+                    {status !== "loading" && (
                         <>
                             <CustomError />
                             {children}

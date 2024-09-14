@@ -7,7 +7,7 @@ import EmojiPicker from 'emoji-picker-react';
 import Image from 'next/image';
 import { GetServerSideProps } from 'next/types'
 import { useRouter } from 'next/router';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 
 //& Mui
 import { TextField, IconButton, Avatar, Button, CircularProgress, Input } from '@mui/material';
@@ -15,7 +15,7 @@ import { TextField, IconButton, Avatar, Button, CircularProgress, Input } from '
 //& Components
 import Sidebar from '@/components/Sidebar'
 import Info from "@/components/messages/Info"
-
+import Message from '@/components/messages/Message';
 
 //& Emojis
 import emojiPhoto from '../../../svg/black/emoji-emotions.svg'
@@ -27,11 +27,9 @@ import backPhoto from '../../../svg/black/back.svg'
 
 //& Context
 import { useDefault } from '@/contexts/Default';
-import { useSocket } from '@/contexts/Socket';
 
 //& Exports
-import { MessagePageProps } from '@/exports/interfaces';
-import { formatTimestamp } from '@/exports/utilities';
+import { MessagePageProps } from '@/exports/types';
 
 
 const query = `query ($email: String!, $secondEmail: String!, $jump: Int!) {
@@ -60,8 +58,11 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
 
     const router = useRouter()
 
-    const { user, server, setError } = useDefault()
-    const { socket } = useSocket()
+    const { data: session } = useSession();
+
+    const user = session?.user
+
+    const { server, setError, socket } = useDefault()
 
     const submitRef = useRef<HTMLInputElement | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -74,7 +75,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
     const [info, setInfo] = useState<boolean>(false)
     const [bg, setBg] = useState<string>(background)
     const [selectedPhoto, setSelectedPhoto] = useState<any>(null)
-    const [viewPhoto, setViewPhoto] = useState<string | null>(null)
+    const [viewPhoto, setViewPhoto] = useState<string | null | undefined>(null)
 
 
     const handleScroll = useCallback(async () => {
@@ -128,12 +129,10 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
         const container = scrollRef?.current;
         if (container) {
             container.addEventListener('scroll', handleScroll);
-        }
-        return () => {
-            if (container) {
+            return () => {
                 container.removeEventListener('scroll', handleScroll);
-            }
-        };
+            };
+        }
     }, [handleScroll]);
 
     useEffect(() => {
@@ -158,7 +157,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
             }
             socket?.emit('seen', newEmit)
         }
-        socket?.on('message', (newMessage) => {
+        socket?.on('message', (newMessage: any) => {
             if (newMessage.success) {
                 if (scrollRef.current && scrollRef.current.scrollTop === 0 && newMessage.message.email !== user?.email) {
                     const newEmit = {
@@ -193,7 +192,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
             } else setError(newMessage.message)
         });
 
-        socket?.on('seen', (data) => {
+        socket?.on('seen', (data: any) => {
             if (data.success) {
                 setSeen(true)
             } else {
@@ -208,7 +207,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                 socket?.emit('leave', { room });
             }
         };
-    }, [params, user]);
+    }, [params]);
 
     useEffect(() => {
         if (err === "User doesn't exist") {
@@ -298,7 +297,8 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                     {info ? (
                         <Info activeBg={bg} setBg={(bg: any) => setBg(bg)}
                             setInfo={((value: any) => setInfo(value))} setError={((value: any) => setError(value))}
-                            email={user?.email || ''} emailSend={params || ''} />
+                            email={user?.email || ''} emailSend={params || ''}
+                        />
                     ) : (
                         <>
                             <div className='w-full bg relative overflow-auto flex items-center justify-start flex-col-reverse py-2 pl-10 h-full mobile:fixed mobile:bottom-16 mobile:h-[calc(100vh-170px)]'
@@ -307,71 +307,9 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                                 {seen && messages[0]?.email === user?.email && (
                                     <div className='w-full text-right pr-4 text-white'>Seen</div>
                                 )}
-                                {messages?.map((mess: any, index: number) => {
-                                    const toOld = index !== messages.length - 1 && messages[index].date - (3600 * 1000) > messages[index + 1].date || index === messages.length - 1 ||
-                                        new Date(mess.date).getDay() !== new Date(messages[index + 1].date).getDay();
-                                    const toOldSecond = index !== 0 && messages[index - 1].date - (3600 * 1000) > messages[index].date ||
-                                        new Date(messages[index - 1]?.date).getDay() !== new Date(mess.date).getDay();
-                                    if (user?.email === mess?.email) {
-                                        const borderBottom = !toOldSecond && index !== 0 && messages[index - 1].email === user?.email ? '0px' : '24px'
-                                        const borderTop = !toOld && index !== messages.length - 1 && messages[index + 1].email === user?.email ? '0px' : '24px'
-                                        return (
-                                            <>
-                                                <div className='w-auto max-w-[60%] p-0.5 self-end mr-2 flex' key={index}>
-                                                    <div className={`flex flex-col text-right bg-white p-3 overflow-hidden rounded-3xl items-start justify-start w-auto`}
-                                                        style={{ borderTopRightRadius: borderTop, borderBottomRightRadius: borderBottom }}
-                                                    >
-                                                        {mess.photo && (
-                                                            <div className='cursor-pointer w-full max-w-md h-auto flex items-center justify-center'
-                                                                onClick={() => setViewPhoto(mess.photo)}
-                                                            >
-                                                                <img src={mess.photo} className='w-full h-auto rounded-xl' alt='This photo was deleted from the database' />
-                                                            </div>
-                                                        )}
-                                                        <div className='mr-2 '>{mess.message}</div>
-                                                    </div>
-                                                    {mess?.loading && (
-                                                        <div className='w-10 flex items-center justify-center h-10'>
-                                                            <CircularProgress size={16} sx={{ ml: 1, mr: 1, color: 'white' }} />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                {toOld && (
-                                                    <div className='my-4 text-white -ml-10 w-full text-center'>{formatTimestamp(messages[index]?.date)}</div>
-                                                )}
-                                            </>
-                                        )
-                                    } else {
-                                        const borderBottom = !toOldSecond && index !== 0 && messages[index - 1].email !== user?.email ? '0px' : '24px'
-                                        const borderTop = !toOld && index !== messages.length - 1 && messages[index + 1].email !== user?.email ? '0px' : '24px'
-                                        return (
-                                            <>
-                                                <div className='w-auto max-w-[60%] p-0.5 self-start ml-2 flex justify-center items-end' key={index}>
-                                                    {borderBottom === '24px' && (
-                                                        <Avatar src={avatar} onClick={() => router.push(`/main/users/${mess.email}`)}
-                                                            sx={{ cursor: 'pointer', ml: -5 }}
-                                                        />
-                                                    )}
-                                                    <div className='flex flex-col bg-white p-3 items-start overflow-hidden justify-start rounded-3xl ml-2 w-full'
-                                                        style={{ borderTopLeftRadius: borderTop, borderBottomLeftRadius: borderBottom }}
-                                                    >
-                                                        {mess.photo && (
-                                                            <div className='cursor-pointer w-full max-w-md h-auto flex items-center justify-center'
-                                                                onClick={() => setViewPhoto(mess.photo)}
-                                                            >
-                                                                <img src={mess.photo} className='w-full h-auto rounded-xl' alt='This photo was deleted from the database' />
-                                                            </div>
-                                                        )}
-                                                        <div className=''>{mess.message}</div>
-                                                    </div>
-                                                </div>
-                                                {toOld && (
-                                                    <div className='my-4 text-white -ml-10 w-full text-center'>{formatTimestamp(messages[index]?.date)}</div>
-                                                )}
-                                            </>
-                                        )
-                                    }
-                                })}
+                                <Message messages={messages} avatar={avatar}
+                                    user={user} setViewPhoto={((value: string | null | undefined) => { setViewPhoto(value) })}
+                                />
                                 {hasMoreData ? (
                                     <CircularProgress sx={{ m: 2, color: 'white', marginLeft: "-40px" }} />
                                 ) : (

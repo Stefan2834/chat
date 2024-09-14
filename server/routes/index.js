@@ -62,7 +62,9 @@ router.post("/sidebar", async (req, res) => {
         if (email == null || usersToSkip == null) {
             return res.json({
                 success: false,
-                message: "Invalid request data"
+                sidebar: [],
+                hasMoreData: false,
+                error: "Invalid request data"
             })
         }
 
@@ -71,7 +73,9 @@ router.post("/sidebar", async (req, res) => {
         if (!messageDb) {
             return res.json({
                 success: false,
-                message: 'User not found',
+                sidebar: [],
+                hasMoreData: false,
+                error: 'User not found',
             });
         }
 
@@ -82,8 +86,6 @@ router.post("/sidebar", async (req, res) => {
             { $group: { _id: '$_id', conversations: { $push: '$conversations' } } },
             { $project: { conversations: { $slice: ['$conversations', usersToSkip, elementNumber] } } },
         ]);
-
-        console.log(result);
 
         const side = result[0]?.conversations?.map((conversation) => {
             const last = conversation.messages.length - 1;
@@ -102,10 +104,10 @@ router.post("/sidebar", async (req, res) => {
         const hasMoreData = usersToSkip + elementNumber < totalConversations;
 
         return res.json({
-            success: true, sidebar: side || [], hasMoreData
+            success: true, sidebar: side || [], hasMoreData, error: null
         })
     } catch (e) {
-        return res.json({ success: false, error: e.message })
+        return res.json({ success: false, sidebar: [], hasMoreData: false, error: e.message })
     }
 })
 
@@ -116,14 +118,14 @@ router.post("/messages", async (req, res) => {
     try {
 
         if (email == null || secondEmail == null || jump == null) {
-            return res.json({ success: false, message: "Wrong information provided." })
+            return res.json({ success: false, error: "Wrong information provided." })
         }
         const elementNumber = 50;
         const messagesDb = await Messages.findOne({ email });
         if (!messagesDb) {
             return res.json({
                 success: false,
-                message: 'User not found',
+                error: 'User not found',
             })
         }
         const messages = messagesDb?.conversations?.find(conversation => {
@@ -176,7 +178,7 @@ router.post("/messages", async (req, res) => {
             } else {
                 return res.json({
                     success: false,
-                    message: 'Conversation not found'
+                    error: 'Conversation not found'
                 })
             }
         } else {
@@ -194,13 +196,13 @@ router.post("/messages", async (req, res) => {
             } else {
                 return res.json({
                     success: false,
-                    message: "User don't exist"
+                    error: "User don't exist"
                 })
             }
         }
     } catch (err) {
         console.log(err);
-        res.json({ success: false, message: err.message })
+        res.json({ success: false, error: err.message })
     }
 })
 
