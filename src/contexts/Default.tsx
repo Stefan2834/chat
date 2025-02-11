@@ -40,6 +40,7 @@ export function DefaultProvider({ children }: { children: ReactNode }) {
 
     
     
+    
     const value: DefaultContextValue = {
         socket,
         server,
