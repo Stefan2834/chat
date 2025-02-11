@@ -14,7 +14,7 @@ import { TextField, IconButton, Avatar, Button, CircularProgress, Input } from '
 
 //& Components
 import Sidebar from '@/components/Sidebar'
-import Info from "@/components/messages/Info"
+import Info from "@/components/messages/InfoComp"
 import Message from '@/components/messages/Message';
 
 //& Emojis
