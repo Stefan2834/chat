@@ -38,8 +38,8 @@ export const authOptions: NextAuthOptions = {
             }
             return { ...token, ...user };
         },
-        async session({ session, token, user }) {
-            session.user.username = token.username || ""
+        async session({ session, token }: { session: any; token: any }) {
+            session.user.username = token.username || "";
             return session;
         },
         async signIn({ user }) {
