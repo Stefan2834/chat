@@ -103,6 +103,7 @@ io.on('connection', (socket) => {
             }
             console.log(`Message sent in room: ${data.room}`);
             io.to(data.room).emit('message', { success: true, message: message, photo: message?.photo });
+            console.log(data.userSend);
             const sideReceive = {
                 username: data?.userSend || '',
                 lastMsg: data?.message || '',
@@ -117,6 +118,7 @@ io.on('connection', (socket) => {
                 avatar: data.avatarReceive || '',
                 email: data.emailReceive || ''
             };
+            console.log(data?.userSend);
             io.to(`side-${data?.emailReceive}`).emit('notification', { success: true, message: message, avatar: data.avatarSend });
             io.to(`side-${data?.emailReceive}`).emit('changeSide', { success: true, side: sideReceive, sender: data.emailSend })
             io.to(`side-${data?.emailSend}`).emit('changeSide', { success: true, side: sideSend, sender: data.emailSend })

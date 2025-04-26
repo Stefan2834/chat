@@ -8,6 +8,7 @@ const accessExpire = '15s'
 router.post('/register', async (req, res) => {
     const { username, password, email, avatar } = req.body;
     try {
+        console.log(username, email);
         const userDb = await Users.findOne({ username })
         const emailDb = await Users.findOne({ email })
         if (userDb || emailDb) {

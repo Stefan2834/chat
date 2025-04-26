@@ -233,6 +233,7 @@ export default function Messages({ messagesData, avatar, params, username, hasSe
                 const photo = await axios.post(`${server}/upload-photo`, formData)
                 photoUrl = photo?.data?.url
             }
+            console.log(user?.username);
             const newMessage = {
                 emailSend: user?.email,
                 emailReceive: params,
